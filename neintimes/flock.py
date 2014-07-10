@@ -9,14 +9,17 @@ from formation import *
 import pprint
 
 class Flock(LocalGroup):
-    def __init__(self, accelConst=1.2, seperation=30.0):
+    def __init__(self, accelConst=1.2, seperation=30.0, formation=None):
         Group.__init__(self)
         self.centerOfMass = None
         self.momentum = None
         self.targetLocation = None
         self.accelConst = accelConst
-        self.seperation = seperation
+        self.seperation = seperation#deprecate
         self.shotgroup = LocalGroup()
+        if formation == None:
+            formation = testFormation()
+        self.formation = formation
 
     def draw(self, screen):
         self.shotgroup.draw(screen)

@@ -31,8 +31,11 @@ def main():
     clock.tick()
     image = loadsurface("small2.png")
     playerboid = player.Player(None, image)
+    boid1 = Boid(Vector2D(0,0), image)
+    boid2 = Boid(Vector2D(0,0), image)
     pgroup.add(playerboid)
-
+    pgroup.add(boid1)
+    pgroup.add(boid2)
     print "Entering main loop..."
     while True:
         #deal with eventlist
