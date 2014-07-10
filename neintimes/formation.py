@@ -16,3 +16,10 @@ class Formation:
 	def __init__(self, slotList):
 		for s in slotList:
 			self.slotList.append(s)
+	def numSlots(self):
+		return len(self.slotList)
+	def addSlot(self, s):
+		self.slotList.append(s)
+	def deleteSlot(self, index=-1):
+		del self.slotList[index]
+	

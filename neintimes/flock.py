@@ -5,6 +5,7 @@ from data import *
 from vector import *
 from pygame.sprite import *
 from localsprite import *
+from formation import *
 import pprint
 
 class Flock(LocalGroup):
