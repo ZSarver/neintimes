@@ -24,18 +24,21 @@ def main():
 
     #create game objects
     pgroup = player.PlayerGroup()
+    fgroup = Flock(1.2,0.0)
     #sprite groups must be added to the screen to be drawn
     screen.add(pgroup)
+    screen.add(fgroup)
     print "Creating clock..."
     clock = pygame.time.Clock()
     clock.tick()
     image = loadsurface("small2.png")
     playerboid = player.Player(None, image)
-    boid1 = Boid(Vector2D(0,0), image)
-    boid2 = Boid(Vector2D(0,0), image)
     pgroup.add(playerboid)
-    pgroup.add(boid1)
-    pgroup.add(boid2)
+    for i in range(3):
+        b = Boid(Vector2D(0,0),image)
+        fgroup.add(b)
+    fgroup.setAnchor(playerboid)
+
     print "Entering main loop..."
     while True:
         #deal with eventlist
@@ -48,6 +51,7 @@ def main():
         time = clock.tick(60) #tick! limit to 60 fps
 
         pgroup.update()
+        fgroup.update()
         screen.update(playerboid.position)
         pygame.event.pump()
 

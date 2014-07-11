@@ -11,7 +11,7 @@ import random
 
 
 class Boid(LocalSprite):
-    def __init__(self, position, image, aim=0, weight=1, thrust=2, maxSpeed=3, rotationspeed=0.01, weap=None):
+    def __init__(self, position, image, aim=0, weight=1, thrust=3, maxSpeed=6, rotationspeed=0.02, weap=None):
         """Creates a new Boid
 
         aim - a Vector2D of the boid's initial aim
@@ -34,25 +34,33 @@ class Boid(LocalSprite):
             self.weapon = weapon.testweapon()
         else:
             self.weapon = weap
-
-    def update(self, targetLocation, flockmates, seperation):
+    def update(self, targetLocation, targetAim, targetMomentum):
         self.weapon.cool
-        if not self.iscontrolled:
-            #deal with seperation
-            acc = Vector2D(0,0)
-            for i in list(flockmates):
-                d = distance(self.position, i.position)
-                if d > 0.0001:
-                    c = (seperation * i.weight) / d
-                    acc += scalarmult(self.position - i.position, c)
-            #calculate new heading
-            goalaimvector = (targetLocation - self.position + acc).unit
-            aimdiff = goalaimvector - vectorfromangle(self.aim)
-            newaimvector = vectorfromangle(self.aim) + aimdiff.crop(self.rotationspeed)
-            self.aim = newaimvector.direction
-            if newaimvector.dot(goalaimvector) > 0:
-                self.propel(vectorfromangle(self.aim,self.thrust))
-
+        #~ if not self.iscontrolled:
+            #~ #deal with seperation
+            #~ acc = Vector2D(0,0)
+            #~ for i in list(flockmates):
+                #~ d = distance(self.position, i.position)
+                #~ if d > 0.0001:
+                    #~ c = (seperation * i.weight) / d
+                    #~ acc += scalarmult(self.position - i.position, c)
+        #head toward target location
+        d = distance(targetLocation, self.position)
+        t = 30
+        goal = targetLocation - self.position 
+        timeestimate = sqrt(d/max(self.momentum.magnitude,self.maxSpeed/2))
+        goal += (targetMomentum - self.momentum).mult(timeestimate)
+        def easeMomentum(targetMomentum, c):
+            goalmomentum = self.momentum.mult(1-c) + targetMomentum.mult(c)
+            diff = goalmomentum - self.momentum
+            diff.crop(self.thrust)
+            self.propel(diff)
+        easeMomentum(goal, 0.2)
+        if d > t:
+            goalaimvector = goal.unit
+            self.aim = goalaimvector.direction
+        else:
+            self.aim = targetAim
         #update image based on new aim
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
         self.position += self.momentum
