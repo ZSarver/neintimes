@@ -70,6 +70,7 @@ class Boid(LocalSprite):
             easePosition(targetLocation,0.5)
         #update image based on new aim
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
+        self.rect = self.image.get_rect()
         self.position += self.momentum
     def lock(self):
         self.islocked = True

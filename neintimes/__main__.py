@@ -30,8 +30,11 @@ def main():
     clock = pygame.time.Clock()
     clock.tick()
     image = loadsurface("small2.png")
+    #~ image = pygame.Surface((15, 15))
+    #~ image.fill((0,255,0))
+    #~ image.convert()
     p = player.Player(None, image)
-    for i in range(3):
+    for i in range(9):
         b = Boid(Vector2D(0,0),image)
         fgroup.addSquad(b)
     fgroup.addAnchor(p)
@@ -46,7 +49,6 @@ def main():
         p.playerInput(thrustDirection, boost, rotation, shooting)
 
         time = clock.tick(60) #tick! limit to 60 fps
-
         fgroup.update()
         screen.update(p.position) #center camera on player
         pygame.event.pump()

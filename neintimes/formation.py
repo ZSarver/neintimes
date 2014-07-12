@@ -2,6 +2,7 @@
 
 from vector import *
 from copy import deepcopy
+from math import pi
 
 class FormationSlot:
     def __init__(self, spatialOffset=None, angularOffset=0, weapon=None, timeOffset=0 ):
@@ -31,11 +32,18 @@ class Formation:
 
 
 def testFormation():
-    v1 = Vector2D(-30,0)
-    v2 = Vector2D(-50,-50)
-    v3 = Vector2D(-50,50)
-    s1 = FormationSlot(v1,0)
-    s2 = FormationSlot(v2,-pi/6)
-    s3 = FormationSlot(v3,pi/6)
-    f = Formation([s1,s2,s3])
+    #~ v1 = Vector2D(-30,0)
+    #~ v2 = Vector2D(-50,-50)
+    #~ v3 = Vector2D(-50,50)
+    #~ s1 = FormationSlot(v1,0)
+    #~ s2 = FormationSlot(v2,-pi/6)
+    #~ s3 = FormationSlot(v3,pi/6)
+    #~ f = Formation([s1,s2,s3])
+    l = []
+    for i in range(9):
+        a = i * 2 * pi / 9
+        v = vectorfromangle(a).mult(60)
+        s = FormationSlot(v, a)
+        l.append(s)
+    f = Formation(l)
     return f

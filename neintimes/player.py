@@ -67,6 +67,7 @@ class Player(LocalSprite):
             #~ maxSpeed = baseSpeed
         self.aim += rotationSpeed * rotationDir 
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
+        self.rect = self.image.get_rect()
         #~ thrustVector = relThrustVector.rotate(self.aim).mult(t)
         #~ self.propel(thrustVector, maxSpeed)
         thrustVector = relThrustVector.rotate(self.aim).mult(thrust)

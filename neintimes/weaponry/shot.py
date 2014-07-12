@@ -10,7 +10,7 @@ import pprint
 
 
 class Shot(LocalSprite):
-    def __init__(self, position, heading, image=None, size=1, route=None, lifetime=500):
+    def __init__(self, position, heading, image=None, size=1, route=None, lifetime=300):
         """Creates a new shot.
 
         position - a Vector2D of the shot's position
