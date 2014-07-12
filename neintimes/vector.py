@@ -1,4 +1,4 @@
-#vectors.py - implements vectors
+#vector.py - implements vectors
 
 from math import *
 
