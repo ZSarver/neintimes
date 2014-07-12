@@ -23,21 +23,18 @@ def main():
     screen = Screen(640,480,camera.roughTrack(0))    
 
     #create game objects
-    pgroup = player.PlayerGroup()
     fgroup = Flock(1.2,0.0)
     #sprite groups must be added to the screen to be drawn
-    screen.add(pgroup)
     screen.add(fgroup)
     print "Creating clock..."
     clock = pygame.time.Clock()
     clock.tick()
     image = loadsurface("small2.png")
-    playerboid = player.Player(None, image)
-    pgroup.add(playerboid)
+    p = player.Player(None, image)
     for i in range(3):
         b = Boid(Vector2D(0,0),image)
-        fgroup.add(b)
-    fgroup.setAnchor(playerboid)
+        fgroup.addSquad(b)
+    fgroup.addAnchor(p)
 
     print "Entering main loop..."
     while True:
@@ -46,13 +43,12 @@ def main():
             if i.type == QUIT:
                 exit()
         (thrustDirection, boost, rotation, shooting)  = getInputActions()
-        playerboid.update(thrustDirection, boost, rotation, shooting)
+        p.playerInput(thrustDirection, boost, rotation, shooting)
 
         time = clock.tick(60) #tick! limit to 60 fps
 
-        pgroup.update()
         fgroup.update()
-        screen.update(playerboid.position)
+        screen.update(p.position) #center camera on player
         pygame.event.pump()
 
 main()

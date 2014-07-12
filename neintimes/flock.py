@@ -6,6 +6,7 @@ from vector import *
 from pygame.sprite import *
 from localsprite import *
 from formation import *
+from copy import deepcopy
 import pprint
 
 class Flock(LocalGroup):
@@ -17,10 +18,23 @@ class Flock(LocalGroup):
         self.accelConst = accelConst
         self.seperation = seperation#deprecate
         self.shotgroup = LocalGroup()
+        self.squad = []
+        self.anchor = None
         if formation == None:
             formation = testFormation()
         self.formation = formation
 
+    def addSquad(self, boid):
+        self.add(boid)
+        l = len(self.squad)
+        #crash if trying to overfill a flock
+        assert(l < self.formation.numSlots())
+        boid.formationSlot = self.formation.getSlot(l)
+        self.squad.append(boid)
+    def addAnchor(self, anchor):
+        self.add(anchor)
+        self.anchor = anchor
+        anchor.setSquad(self.squad)
     def draw(self, screen):
         self.shotgroup.draw(screen)
         Group.draw(self, screen)
@@ -32,9 +46,6 @@ class Flock(LocalGroup):
     def clear(self, screen, background):
         self.shotgroup.clear(screen, background)
         Group.clear(self, screen, background)
-
-    def setAnchor(self, anchor):
-        self.anchor = anchor
 
     def update(self):
         """Updates, calculating everything each individual boid needs
@@ -53,10 +64,10 @@ class Flock(LocalGroup):
         #~ self.momentum = scalarmult(haccum,1.0/float(len(momentumlist)))
         #~ self.targetLocation = self.centerOfMass + scalarmult(self.momentum,self.accelConst)
         #~ Group.update(self, self.targetLocation, self.sprites(), self.seperation)
-        for index, ship in enumerate(self.sprites()):
-            formationSlot = self.formation.getSlot(index)
-            targetLocation = self.anchor.position + formationSlot.spatialOffset.rotate(self.anchor.aim)
+        for ship in self.squad:
+            formationSlot = ship.formationSlot
+            targetLocation = self.anchor.position + deepcopy(formationSlot.spatialOffset).rotate(self.anchor.aim)
             targetAim = self.anchor.aim + formationSlot.angularOffset
             targetMomentum = self.anchor.momentum
             ship.update(targetLocation, targetAim, targetMomentum)
-            
+        self.anchor.update()

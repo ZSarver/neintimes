@@ -9,6 +9,7 @@ from weaponry import *
 import pprint
 import random
 
+FORMATION_LOCK_DISTANCE = 10
 
 class Boid(LocalSprite):
     def __init__(self, position, image, aim=0, weight=1, thrust=3, maxSpeed=6, rotationspeed=0.02, weap=None):
@@ -27,7 +28,8 @@ class Boid(LocalSprite):
         self.momentum = Vector2D(0,0)
         self.weight = weight
         self.thrust = thrust
-        self.iscontrolled = False
+        self.iscontrolled = False #deprecate
+        self.islocked = False
         self.maxSpeed = maxSpeed
         self.rotationspeed = rotationspeed
         if weap == None:
@@ -36,37 +38,45 @@ class Boid(LocalSprite):
             self.weapon = weap
     def update(self, targetLocation, targetAim, targetMomentum):
         self.weapon.cool
-        #~ if not self.iscontrolled:
-            #~ #deal with seperation
-            #~ acc = Vector2D(0,0)
-            #~ for i in list(flockmates):
-                #~ d = distance(self.position, i.position)
-                #~ if d > 0.0001:
-                    #~ c = (seperation * i.weight) / d
-                    #~ acc += scalarmult(self.position - i.position, c)
-        #head toward target location
         d = distance(targetLocation, self.position)
-        t = 30
-        goal = targetLocation - self.position 
-        timeestimate = sqrt(d/max(self.momentum.magnitude,self.maxSpeed/2))
-        goal += (targetMomentum - self.momentum).mult(timeestimate)
+        if d  < FORMATION_LOCK_DISTANCE:
+            self.lock()
+        else:
+            self.unlock()
         def easeMomentum(targetMomentum, c):
             goalmomentum = self.momentum.mult(1-c) + targetMomentum.mult(c)
             diff = goalmomentum - self.momentum
-            diff.crop(self.thrust)
+            diff.Mcrop(self.thrust)
             self.propel(diff)
-        easeMomentum(goal, 0.2)
-        if d > t:
-            goalaimvector = goal.unit
-            self.aim = goalaimvector.direction
-        else:
+        def easePosition(target, c):
+            newpos = self.position.mult(1-c) + target.mult(c)
+            self.position = newpos
+        if not self.islocked:
+            #when not already locked into formation, move toward the assigned position
+            goal = targetLocation - self.position 
+            timeestimate = sqrt(d/max(self.momentum.magnitude,self.maxSpeed/2))
+            goal += (targetMomentum - self.momentum).mult(timeestimate)
+            easeMomentum(goal, 0.2)
+            if d > (4 * FORMATION_LOCK_DISTANCE):
+                #when close to locking into formation, aim in the assigned direction
+                goalaimvector = goal.unit
+                self.aim = goalaimvector.direction
+            else:
+                #otherwise aim toward destination
+                self.aim = targetAim
+        if self.islocked:
+            self.momentum = targetMomentum
             self.aim = targetAim
+            easePosition(targetLocation,0.5)
         #update image based on new aim
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
         self.position += self.momentum
-
+    def lock(self):
+        self.islocked = True
+    def unlock(self):
+        self.islocked = False
     def propel(self, vector):
-        self.momentum = (self.momentum + vector).crop(self.maxSpeed)
+        self.momentum = (self.momentum + vector).Mcrop(self.maxSpeed)
 
     def shoot(self):
         g = self.groups()[0].shotgroup
