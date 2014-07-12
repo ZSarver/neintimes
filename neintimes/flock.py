@@ -66,7 +66,7 @@ class Flock(LocalGroup):
         #~ Group.update(self, self.targetLocation, self.sprites(), self.seperation)
         for ship in self.squad:
             formationSlot = ship.formationSlot
-            targetLocation = self.anchor.position + deepcopy(formationSlot.spatialOffset).rotate(self.anchor.aim)
+            targetLocation = self.anchor.position + formationSlot.spatialOffset.rotate(self.anchor.aim)
             targetAim = self.anchor.aim + formationSlot.angularOffset
             targetMomentum = self.anchor.momentum
             ship.update(targetLocation, targetAim, targetMomentum)

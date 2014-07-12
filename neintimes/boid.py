@@ -37,7 +37,7 @@ class Boid(LocalSprite):
         else:
             self.weapon = weap
     def update(self, targetLocation, targetAim, targetMomentum):
-        self.weapon.cool
+        self.weapon.cool()
         d = distance(targetLocation, self.position)
         if d  < FORMATION_LOCK_DISTANCE:
             self.lock()

@@ -54,8 +54,8 @@ class Player(LocalSprite):
         self.squad = squad
     def playerInput(self, relThrustVector, boost, rotationDir, shooting):
         #~ self.weapon.cool() #deprecate
-        #~ if shooting: #deprecate
-            #~ self.shoot() #deprecate
+        if shooting:
+            self.shoot()
         #for rotation,
         #  right = 1
         #  left = -1
@@ -79,5 +79,7 @@ class Player(LocalSprite):
         self.momentum = (self.momentum + vector).Mcrop(maxSpeed)
 
     def shoot(self):
-        g = self.groups()[0].shotgroup
-        self.weapon.fire(self.position, self.aim, self.momentum, g)
+        #~ g = self.groups()[0].shotgroup
+        #~ self.weapon.fire(self.position, self.aim, self.momentum, g)
+        for s in self.squad:
+            s.shoot()
