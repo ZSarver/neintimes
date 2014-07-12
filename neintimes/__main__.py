@@ -8,6 +8,7 @@ from data import *
 from math import *
 from weaponry import *
 from input import *
+from statuseffects import *
 import player
 import camera
 import random
@@ -39,6 +40,8 @@ def main():
         b = Boid(Vector2D(0,0),image)
         fgroup.addSquad(b)
     fgroup.addAnchor(p)
+    t = testEffect()
+    applyEffect(b, None, t)
 
     print "Entering main loop..."
     while True:
