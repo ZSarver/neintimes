@@ -48,23 +48,13 @@ class Player(LocalSprite):
         self.momentum = Vector2D(0,0)
         self.rect = image.get_rect()
         self.squad = None
+        self.shooting = False
         if weap == None:#deprecate
             self.weapon = weapon.testweapon()#deprecate
     def setSquad(self, squad):
         self.squad = squad
     def playerInput(self, relThrustVector, boost, rotationDir, shooting):
-        #~ self.weapon.cool() #deprecate
-        if shooting:
-            self.shoot()
-        #for rotation,
-        #  right = 1
-        #  left = -1
-        #~ if boost is True:
-            #~ t = boostThrust
-            #~ maxSpeed = boostSpeed
-        #~ else:
-            #~ t = thrust
-            #~ maxSpeed = baseSpeed
+        self.shooting = shooting
         self.aim += rotationSpeed * rotationDir 
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
         self.rect = self.image.get_rect()
@@ -79,8 +69,8 @@ class Player(LocalSprite):
     def propel(self, vector, maxSpeed):
         self.momentum = (self.momentum + vector).Mcrop(maxSpeed)
 
-    def shoot(self):
+    #~ def shoot(self):
         #~ g = self.groups()[0].shotgroup
         #~ self.weapon.fire(self.position, self.aim, self.momentum, g)
-        for s in self.squad:
-            s.shoot()
+        #~ for s in self.squad:
+            #~ s.shoot()

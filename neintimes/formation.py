@@ -41,9 +41,11 @@ def testFormation():
     #~ f = Formation([s1,s2,s3])
     l = []
     for i in range(9):
-        a = i * 2 * pi / 9
-        v = vectorfromangle(a).mult(60)
-        s = FormationSlot(v, a)
+        a = (i-4) * pi / 4.5
+        d = 60 
+        v = vectorfromangle(a).mult(d)
+        t = abs(i - 4) * 5
+        s = FormationSlot(v, a, None, t)
         l.append(s)
     f = Formation(l)
     return f

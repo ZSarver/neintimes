@@ -36,7 +36,7 @@ class Boid(LocalSprite):
             self.weapon = weapon.testweapon()
         else:
             self.weapon = weap
-    def update(self, targetLocation, targetAim, targetMomentum):
+    def update(self, targetLocation, targetAim, targetMomentum, shooting):
         self.weapon.cool()
         d = distance(targetLocation, self.position)
         if d  < FORMATION_LOCK_DISTANCE:
@@ -68,6 +68,8 @@ class Boid(LocalSprite):
             self.momentum = targetMomentum
             self.aim = targetAim
             easePosition(targetLocation,0.5)
+            if shooting:
+                self.shoot()
         #update image based on new aim
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
         self.rect = self.image.get_rect()

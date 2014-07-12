@@ -30,10 +30,11 @@ def main():
     clock = pygame.time.Clock()
     clock.tick()
     image = loadsurface("small2.png")
+    pimage = loadsurface("anchor.png")
     #~ image = pygame.Surface((15, 15))
     #~ image.fill((0,255,0))
     #~ image.convert()
-    p = player.Player(None, image)
+    p = player.Player(None, pimage)
     for i in range(9):
         b = Boid(Vector2D(0,0),image)
         fgroup.addSquad(b)

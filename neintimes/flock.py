@@ -9,6 +9,8 @@ from formation import *
 from copy import deepcopy
 import pprint
 
+MAX_HISTORY_FRAMES = 300
+
 class Flock(LocalGroup):
     def __init__(self, accelConst=1.2, seperation=30.0, formation=None):
         Group.__init__(self)
@@ -35,6 +37,7 @@ class Flock(LocalGroup):
         self.add(anchor)
         self.anchor = anchor
         anchor.setSquad(self.squad)
+        anchor.history = []
     def draw(self, screen):
         self.shotgroup.draw(screen)
         Group.draw(self, screen)
@@ -51,23 +54,26 @@ class Flock(LocalGroup):
         """Updates, calculating everything each individual boid needs
         to know to flock effectively."""
         self.shotgroup.update()
-        #~ weightlist = [ship.weight for ship in self.sprites()]
-        #~ positionlist = [ship.position for ship in self.sprites()]
-        #~ accum = Vector2D(0,0)
-        #~ for i in range(len(positionlist)):
-            #~ accum = accum + scalarmult(positionlist[i], weightlist[i])
-        #~ self.centerOfMass = scalarmult(accum, 1.0/float(sum(weightlist)))
-        #~ momentumlist = [ship.momentum for ship in self.sprites()]
-        #~ haccum = Vector2D(0,0)
-        #~ for i in momentumlist:
-            #~ haccum = haccum + i
-        #~ self.momentum = scalarmult(haccum,1.0/float(len(momentumlist)))
-        #~ self.targetLocation = self.centerOfMass + scalarmult(self.momentum,self.accelConst)
-        #~ Group.update(self, self.targetLocation, self.sprites(), self.seperation)
+        p = self.anchor.position
+        m = self.anchor.momentum
+        a = self.anchor.aim
+        f = self.anchor.shooting
+        h = self.anchor.history
+        h.append((p,m,a,f))
+        l = len(h)
+        if l > MAX_HISTORY_FRAMES*2:
+            h = h[l-MAX_HISTORY_FRAMES:l]
         for ship in self.squad:
             formationSlot = ship.formationSlot
-            targetLocation = self.anchor.position + formationSlot.spatialOffset.rotate(self.anchor.aim)
-            targetAim = self.anchor.aim + formationSlot.angularOffset
-            targetMomentum = self.anchor.momentum
-            ship.update(targetLocation, targetAim, targetMomentum)
+            t = formationSlot.timeOffset
+            if t < len(h) and t > 0:
+                (p,m,a,f) = h[-t]
+            else:
+                p = self.anchor.position
+                m = self.anchor.momentum
+                a = self.anchor.aim
+                f = self.anchor.shooting
+            targetLocation = p + formationSlot.spatialOffset.rotate(a)
+            targetAim = a + formationSlot.angularOffset
+            ship.update(targetLocation, targetAim, m,f)
         self.anchor.update()
