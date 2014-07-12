@@ -15,7 +15,7 @@ class Boid(LocalSprite):
     def __init__(self, position, image, aim=0, weight=1, thrust=3, maxSpeed=6, rotationspeed=0.02, weap=None):
         """Creates a new Boid
 
-        aim - a Vector2D of the boid's initial aim
+        aim - a Vector2D of the boid's initial aim in radians
         weight - the boid's weight
         image - a Surface representing the Boid
         rect - the rect representing the hitbox and position of the boid"""
