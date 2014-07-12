@@ -31,8 +31,13 @@ class Screen:
             self.cam = camera.constant(Vector2D(0,0))
         else:
             self.cam = cam
+        self.widgets = []
+        self.clock = pygame.time.Clock()
+        self.clock.tick(60)
+        self.deltaT = 0
 
     def update(self, playerpos):
+        self.deltaT = self.clock.tick(60) #tick! limit to 60fps
         self.clear() #remove sprites at old locations
         self.cam.go(self, playerpos)
         self.place() #move sprites rects to current sprite positions
@@ -54,6 +59,8 @@ class Screen:
         self.stars.draw(self.displaysurface,(self.offset.x, self.offset.y))
         for g in self.groups:
             g.draw(self.displaysurface)
+        for w in self.widgets:
+            self.displaysurface.blit(w.draw(self.deltaT),w.position)
 
     def add(self, group):
         #this group will be drawn to the screen
@@ -66,3 +73,15 @@ class Screen:
     def center(self, place = Vector2D(0,0)):
         #centers the screen at this position
         self.offset = place - Vector2D(640 / 2, 480 / 2)
+
+    def addWidget(self, widget):
+        """Adds a gui widget to be tracked by Screen."""
+        self.widgets.append(widget)
+
+    def removeWidget(self, widget):
+        """Removes a gui widget from being tracked."""
+        self.widgets.remove(widget)
+
+    def handleWidgetInput(self, event):
+        for w in self.widgets:
+            w.handleInput(event)

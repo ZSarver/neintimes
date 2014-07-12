@@ -52,7 +52,6 @@ def main():
         (thrustDirection, boost, rotation, shooting)  = getInputActions()
         p.playerInput(thrustDirection, boost, rotation, shooting)
 
-        time = clock.tick(60) #tick! limit to 60 fps
         fgroup.update()
         screen.update(p.position) #center camera on player
         pygame.event.pump()

@@ -1,5 +1,5 @@
 #python imports
-from copy import deepcopy
+import cPickle as pickle
 
 #pygame imports
 import pygame
@@ -17,6 +17,8 @@ from data import loadsurface
 #convenient constants
 MOUSE_LB = 1
 MOUSE_RB = 3
+PICKLE_JAR = "formations.pi"
+PICKLE_PROTOCOL = 2
 
 class SimpleEditorSprite(LocalSprite):
     def __init__(self, position=Vector2D(0,0), image=None):
@@ -29,8 +31,8 @@ class SimpleEditorSprite(LocalSprite):
     def update(self, aimoffset):
         #update aim
         self.aim = self.aim + aimoffset
-        print "New aim = " + str(self.aim)
         self.image = pygame.transform.rotate(self.originalimage,degrees(float(self.aim)))
+        self.rect = self.image.get_rect()
         
 class FormationEditor(object):
     def __init__(self, screen):
@@ -66,8 +68,22 @@ class FormationEditor(object):
                     self.handlemousedown(i)
                 if i.type == MOUSEMOTION:
                     self.handlemousemotion(i)
+                if i.type == KEYDOWN:
+                    self.handlekeyboard(i)
             self.screen.update(None)
             pygame.event.pump()
+
+    def handlekeyboard(self,event):
+        if event.key == K_s:
+            print "Enter filename to save. Enter nothing to cancel."
+            filename = raw_input("Filename?")
+            if filename != "":
+                self.save(filename)
+        if event.key == K_l:
+            print "Enter filename to load. Enter nothing to cancel."
+            filename = raw_input("Filename?")
+            if filename != "":
+                self.load(filename)
 
     def handlemousedown(self,event):
         if event.button == MOUSE_LB and not self.rotateAction:
@@ -77,11 +93,9 @@ class FormationEditor(object):
             for i in self.slotSprites:
                 if i[1].rect.collidepoint(event.pos):
                     self.selected = i
-            print "Move Action. Selected = " + str(self.selected)
         if event.button == MOUSE_RB and not self.moveAction:
             #prevent moving and rotating at the same time
             self.rotateAction = True
-            print "Rotate Action"
             #select a ship
             for i in self.slotSprites:
                 if i[1].rect.collidepoint(event.pos):
@@ -97,10 +111,38 @@ class FormationEditor(object):
 
     def handlemousemotion(self,event):
         if self.moveAction and (self.selected is not None):
-            self.selected[0].spacialOffset = self.selected[0].spatialOffset + Vector2D(*event.rel)
+            self.selected[0].spatialOffset = self.selected[0].spatialOffset + Vector2D(*event.rel)
+            #print self.selected[0].spacialOffset.x
             self.selected[1].position = self.selected[1].position + Vector2D(*event.rel)
+            print self.selected[1].position.x
         if self.rotateAction and (self.selected is not None):
             self.selected[1].update(0.01 * Vector2D(*event.rel).magnitude)
+            self.selected[0].angularOffset = self.selected[1].aim
+
+    def save(self,filename=None):
+        fleet = Formation([])
+        for i in self.slotSprites:
+            fleet.addSlot(i[0])
+        if filename is None:
+            f = open(PICKLE_JAR, "wb")
+        else:
+            f = open(filename, "wb")
+        pickle.dump(fleet,f,PICKLE_PROTOCOL)
+        f.close()
+
+    def load(self,filename=None):
+        if filename is None:
+            f = open(PICKLE_JAR, "rb")
+        else:
+            f = open(filename, "rb")
+        fleet = None
+        fleet = pickle.load(f)
+        f.close()
+        #now reconstruct the slotSprites list
+        for i in range(fleet.numSlots()):
+            self.slotSprites[i][0] = fleet.getSlot(i)
+            self.slotSprites[i][1].position = fleet.getSlot(i).spatialOffset
+            self.slotSprites[i][1].update(fleet.getSlot(i).angularOffset)
             
 pygame.init()
 screen = Screen(640,480)
