@@ -1,6 +1,9 @@
 #screen.py implements drawing things on the screen.
 
+#pygame imports
 import pygame
+
+#neintimes imports
 from vector import *
 import camera
 from stars import *
@@ -60,7 +63,7 @@ class Screen:
         for g in self.groups:
             g.draw(self.displaysurface)
         for w in self.widgets:
-            self.displaysurface.blit(w.draw(self.deltaT),w.position)
+            self.displaysurface.blit(pygame.Surface.convert(w.draw(self.deltaT)),w.position)
 
     def add(self, group):
         #this group will be drawn to the screen

@@ -4,6 +4,7 @@
 import pygame
 from pygame import Rect
 from pygame.locals import *
+import pygame.font as ft
 
 #neintimes imports
 from screen import Screen
@@ -48,6 +49,34 @@ class Button(Widget):
             self.animationtimer = 0
             return self.rsurface
 
+class TextBox(Widget):
+    def __init__(self, position, font, text="", textcolor=(0,0,255), bgcolor=None):
+        """A non-user-editable text box for displaying things on screen.
+        
+        font - a pygame.freetype.Font object. Size, style, text color,
+        and rotation may be changed by editing the appropriate member
+        variables of the font object
+
+        position - an (x,y) coordinate pair to renter to on screen
+
+        textcolor - the color of the rendered font. An (r,g,b) triple.
+
+        bgcolor - the background color of the rendered font. An
+        (r,g,b) triple. The background will be transparent if bgcolor
+        is None
+
+        """
+        Widget.__init__(self,position)
+        ft.init() #initialize the freetype module only if we need to
+        self.font = font
+        self.text = text
+        self.textcolor = textcolor
+        self.bgcolor = bgcolor
+    def draw(self, deltaT):
+        return self.font.render(self.text, True, self.textcolor, self.bgcolor)
+        
+
+
 pygame.init()
 screen = Screen(640,480)
 rsurface = loadsurface("rbutton.png")
@@ -58,6 +87,10 @@ position = Rect(100,100,150,50)
 
 btn = Button(position, rsurface, dsurface, callback)
 screen.addWidget(btn)
+
+font = ft.SysFont("Courier New",30)
+tb = TextBox((200,200), font, "Hello, TextBox!", (0,0,255),(0,0,0))
+screen.addWidget(tb)
 
 while True:
     for i in pygame.event.get():
