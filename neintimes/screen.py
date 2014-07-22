@@ -51,6 +51,8 @@ class Screen:
         for g in self.groups:
             g.clear(self.displaysurface, self.background)
         self.stars.undraw(self.displaysurface)
+        for w in self.widgets:
+            self.displaysurface.blit(self.background, w.size())
 
     def place(self):
         #positions the sprite rects for group
