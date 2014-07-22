@@ -14,7 +14,7 @@ class Vector2D:
             if abs(self.magnitude) < 0.000001:
                 d = Vector2D(0,0)
             else:
-                d = scalarmult(self, 1.0 / self.magnitude)
+                d = self.mult(1.0 / self.magnitude)
         elif name == 'direction':
             d = atan2(self.y,self.x)
         else:
