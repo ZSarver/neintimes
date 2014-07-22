@@ -33,12 +33,12 @@ class Vector2D:
 #        else:
 #            raise AttributeError(name + " is not a settable Vector2D attribute")
 
-    def Msetdirection(self, value):
+    def setdirection(self, value):
         self.x = self.magnitude * cos(float(value))
         self.y = self.magnitude * sin(float(value))
         return self
 
-    def Mrotate(self, value):
+    def rotate_ip(self, value):
         c = cos(float(value))
         s = sin(float(value))
         x = self.x * c - self.y * s
@@ -54,7 +54,7 @@ class Vector2D:
         y = self.x * s + self.y * c
         return Vector2D(x,y)
 
-    def Msetmagnitude(self, value):
+    def setmagnitude(self, value):
         self.x = float(value) * cos(self.direction)
         self.y = float(value) * sin(self.direction)
         return self
@@ -72,13 +72,16 @@ class Vector2D:
     def dot(self, vector):
         return self.x * vector.x + self.y * vector.y
 
-    def Mcrop(self, m):
+    def crop_ip(self, m):
         if self.magnitude <= m:
             return self
         else:
-            return self.Mscale(m)
+            v = self.scale(m)
+            self.x = v.x
+            self.y = v.y
+            return self
 
-    def Mscale(self, m):
+    def scale(self, m):
         return self.unit.mult(m)
 
     def mult(self, scalar):
@@ -88,9 +91,6 @@ class Vector2D:
         
     def positive(self):
         return Vector2D(abs(self.x),abs(self.y))
-
-def scalarmult(vector, scalar):
-    return vector.mult(scalar)
 
 def vectorfromangle(a,r=1):
     return Vector2D(r * cos(a),r * sin(a))

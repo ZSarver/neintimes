@@ -67,7 +67,7 @@ class Player(LocalSprite):
         self.position += self.momentum
         
     def propel(self, vector, maxSpeed):
-        self.momentum = (self.momentum + vector).Mcrop(maxSpeed)
+        self.momentum = (self.momentum + vector).crop_ip(maxSpeed)
 
     #~ def shoot(self):
         #~ g = self.groups()[0].shotgroup

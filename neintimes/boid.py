@@ -46,7 +46,7 @@ class Boid(LocalSprite):
         def easeMomentum(targetMomentum, c):
             goalmomentum = self.momentum.mult(1-c) + targetMomentum.mult(c)
             diff = goalmomentum - self.momentum
-            diff.Mcrop(self.thrust)
+            diff.crop_ip(self.thrust)
             self.propel(diff)
         def easePosition(target, c):
             newpos = self.position.mult(1-c) + target.mult(c)
@@ -79,7 +79,7 @@ class Boid(LocalSprite):
     def unlock(self):
         self.islocked = False
     def propel(self, vector):
-        self.momentum = (self.momentum + vector).Mcrop(self.maxSpeed)
+        self.momentum = (self.momentum + vector).crop_ip(self.maxSpeed)
 
     def shoot(self):
         g = self.groups()[0].shotgroup
