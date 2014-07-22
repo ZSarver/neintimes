@@ -7,7 +7,7 @@ from pygame.locals import *
 import pygame.font as ft
 
 #neintimes imports
-from screen import Screen
+#from screen import Screen
 from data import *
 from vector import Vector2D
 
@@ -106,29 +106,29 @@ class EditableTextBox(TextBox):
                     else:
                         self.text = self.text + chr(event.key)
 
+if __name__ == "__main__":
+    pygame.init()
+    screen = Screen(640,480)
+    rsurface = loadsurface("rbutton.png")
+    dsurface = loadsurface("dbutton.png")
+    def callback():
+        print "Hello buttons!"
+    position = Rect(100,100,150,50)
 
-pygame.init()
-screen = Screen(640,480)
-rsurface = loadsurface("rbutton.png")
-dsurface = loadsurface("dbutton.png")
-def callback():
-    print "Hello buttons!"
-position = Rect(100,100,150,50)
+    btn = Button(position, rsurface, dsurface, callback)
+    screen.addWidget(btn)
 
-btn = Button(position, rsurface, dsurface, callback)
-screen.addWidget(btn)
+    font = ft.SysFont("Courier New",30)
+    tb = TextBox((200,200), font, "Hello, TextBox!", (0,0,255),(0,0,0))
+    screen.addWidget(tb)
 
-font = ft.SysFont("Courier New",30)
-tb = TextBox((200,200), font, "Hello, TextBox!", (0,0,255),(0,0,0))
-screen.addWidget(tb)
+    etb = EditableTextBox((300,300), font, "...", (0,0,0), (255,255,255))
+    screen.addWidget(etb)
 
-etb = EditableTextBox((300,300), font, "...", (0,0,0), (255,255,255))
-screen.addWidget(etb)
-
-while True:
-    for i in pygame.event.get():
-        if i.type == QUIT:
-            exit()
-        screen.handleWidgetInput(i)
-    screen.update(Vector2D(0,0))
-    pygame.event.pump()
+    while True:
+        for i in pygame.event.get():
+            if i.type == QUIT:
+                exit()
+            screen.handleWidgetInput(i)
+        screen.update(Vector2D(0,0))
+        pygame.event.pump()

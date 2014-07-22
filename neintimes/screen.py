@@ -2,14 +2,17 @@
 
 #pygame imports
 import pygame
+import pygame.font as ft
 
 #neintimes imports
 from vector import *
 import camera
 from stars import *
+from gui import *
 
 screenwidth = 640
 screenheight = 480
+_debug = True
 
 class Screen:
     def __init__(self, x=screenwidth, y=screenheight, cam=None):
@@ -39,6 +42,11 @@ class Screen:
         self.clock.tick(60)
         self.deltaT = 0
 
+        if _debug:
+            font = ft.SysFont("Courier New", 30)
+            self.framerate = TextBox((10,10), font, "", (255,255,255), (0,0,0))
+            self.addWidget(self.framerate)
+
     def update(self, playerpos):
         self.deltaT = self.clock.tick(60) #tick! limit to 60fps
         self.clear() #remove sprites at old locations
@@ -61,6 +69,8 @@ class Screen:
         self.stars.update((self.offset.x, self.offset.y))
 
     def draw(self):
+        if _debug:
+            self.framerate.text = str(self.clock.get_fps())
         self.stars.draw(self.displaysurface,(self.offset.x, self.offset.y))
         for g in self.groups:
             g.draw(self.displaysurface)
