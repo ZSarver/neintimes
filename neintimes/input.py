@@ -3,7 +3,7 @@ from pygame.locals import *
 import vector
 
 
-[playerThrust, playerReverse, playerStrafe, playerLeft, playerRight, playerBoost, playerShoot] = range(7)
+[playerThrust, playerReverse, playerStrafe, playerLeft, playerRight, playerBoost, playerShoot, changeState] = range(8)
 
 keyBinding = {}
 keyBinding[playerThrust] = K_UP
@@ -13,6 +13,7 @@ keyBinding[playerLeft] = K_LEFT
 keyBinding[playerRight] = K_RIGHT
 keyBinding[playerBoost] = K_x
 keyBinding[playerShoot] = K_z
+keyBinding[changeState] = K_TAB
 
 def getInputActions():
     keylist = pygame.key.get_pressed()
@@ -24,6 +25,7 @@ def getInputActions():
     rotation = 0
     vthrust = 0
     hthrust = 0
+    cs = False
 
     if keylist[keyBinding[playerReverse]]:
         vthrust += down
@@ -36,6 +38,8 @@ def getInputActions():
     if keylist[keyBinding[playerStrafe]]:
         hthrust = rotation
         rotation = 0
+    if keylist[keyBinding[changeState]]:
+        cs = True
     if vthrust is 0 and hthrust is 0:
         thrust = False
         thrustDirection = vector.Vector2D(0,0)
@@ -51,4 +55,4 @@ def getInputActions():
     else:
         shooting = False
 
-    return (thrustDirection, boost, rotation, shooting)
+    return (thrustDirection, boost, rotation, shooting, cs)

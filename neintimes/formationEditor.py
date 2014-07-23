@@ -13,6 +13,7 @@ from formation import *
 from vector import Vector2D
 from localsprite import *
 from data import loadsurface
+from state import *
 
 #convenient constants
 MOUSE_LB = 1
@@ -34,9 +35,9 @@ class SimpleEditorSprite(LocalSprite):
         self.image = pygame.transform.rotate(self.originalimage,degrees(float(self.aim)))
         self.rect = self.image.get_rect()
         
-class FormationEditor(object):
+class FormationEditor(State):
     def __init__(self, screen):
-        self.screen = screen
+        State.__init__(self, screen)
         #set up a list of [FormationSlot,SimpleEditorSprite] pairs
         self.slotSprites = []
         for i in range(9):
@@ -47,8 +48,6 @@ class FormationEditor(object):
         #set up sprites for all the ships in the formation
         for i in self.slotSprites:
             self.drawgroup.add(i[1])
-        #register this drawing group with screen
-        self.screen.add(self.drawgroup)
         #still need to set up cursor stuff maybe?
         pygame.mouse.set_cursor(*pygame.cursors.arrow)
         pygame.mouse.set_visible(True)
@@ -58,20 +57,31 @@ class FormationEditor(object):
         self.rotateAction = False
         
     def run(self):
-        while True:
-            for i in pygame.event.get():
-                if i.type == QUIT:
-                    exit()
-                if i.type == MOUSEBUTTONUP:
-                    self.handlemouseup(i)
-                if i.type == MOUSEBUTTONDOWN:
-                    self.handlemousedown(i)
-                if i.type == MOUSEMOTION:
-                    self.handlemousemotion(i)
-                if i.type == KEYDOWN:
-                    self.handlekeyboard(i)
-            self.screen.update(None)
-            pygame.event.pump()
+        for i in pygame.event.get():
+            if i.type == QUIT:
+                exit()
+            if i.type == MOUSEBUTTONUP:
+                self.handlemouseup(i)
+            if i.type == MOUSEBUTTONDOWN:
+                self.handlemousedown(i)
+            if i.type == MOUSEMOTION:
+                self.handlemousemotion(i)
+            if i.type == KEYDOWN:
+                self.handlekeyboard(i)
+        self.screen.update(None)
+        pygame.event.pump()
+
+    def switchin(self):
+        #register sprites
+        self.screen.add(self.drawgroup)
+        #no widgets
+        #camera
+        self.screen.cam = camera.constant(Vector2D(0,0))
+
+    def switchout(self):
+        #unregister sprites
+        self.screen.remove(self.drawgroup)
+        #no widgets
 
     def handlekeyboard(self,event):
         if event.key == K_s:
@@ -144,7 +154,8 @@ class FormationEditor(object):
             self.slotSprites[i][1].position = fleet.getSlot(i).spatialOffset
             self.slotSprites[i][1].update(fleet.getSlot(i).angularOffset)
             
-pygame.init()
-screen = Screen(640,480)
-fe = FormationEditor(screen)
-fe.run()
+if __name__ == "__main__":
+    pygame.init()
+    screen = Screen(640,480)
+    fe = FormationEditor(screen)
+    fe.run()
