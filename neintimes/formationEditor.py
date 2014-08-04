@@ -68,10 +68,11 @@ class FormationEditor(State):
                 self.handlemousemotion(i)
             if i.type == KEYDOWN:
                 self.handlekeyboard(i)
-        self.screen.update(None)
+        self.screen.update(Vector2D(0,0))
         pygame.event.pump()
 
     def switchin(self):
+        State.switchin(self)
         #register sprites
         self.screen.add(self.drawgroup)
         #no widgets
@@ -94,6 +95,8 @@ class FormationEditor(State):
             filename = raw_input("Filename?")
             if filename != "":
                 self.load(filename)
+        if event.key == K_TAB:
+            statemanager.switch("game")
 
     def handlemousedown(self,event):
         if event.button == MOUSE_LB and not self.rotateAction:
@@ -122,9 +125,7 @@ class FormationEditor(State):
     def handlemousemotion(self,event):
         if self.moveAction and (self.selected is not None):
             self.selected[0].spatialOffset = self.selected[0].spatialOffset + Vector2D(*event.rel)
-            #print self.selected[0].spacialOffset.x
             self.selected[1].position = self.selected[1].position + Vector2D(*event.rel)
-            print self.selected[1].position.x
         if self.rotateAction and (self.selected is not None):
             self.selected[1].update(0.01 * Vector2D(*event.rel).magnitude)
             self.selected[0].angularOffset = self.selected[1].aim

@@ -25,7 +25,6 @@ def getInputActions():
     rotation = 0
     vthrust = 0
     hthrust = 0
-    cs = False
 
     if keylist[keyBinding[playerReverse]]:
         vthrust += down
@@ -40,6 +39,8 @@ def getInputActions():
         rotation = 0
     if keylist[keyBinding[changeState]]:
         cs = True
+    else:
+        cs = False
     if vthrust is 0 and hthrust is 0:
         thrust = False
         thrustDirection = vector.Vector2D(0,0)

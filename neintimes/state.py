@@ -1,3 +1,5 @@
+import pygame
+
 class StateManager(object):
     def __init__(self):
         """Game state manager. Switches smoothly between various screens."""
@@ -31,7 +33,9 @@ class State(object):
         1. Register this state's sprites with screen
         2. Register this state's widgets with screen
         3. Change the camera"""
-        pass
+        pygame.time.delay(100) #need a 10th of a second
+        #to ensure keyboard repeat isn't fucking with
+        #state switching
     def switchout(self):
         """A method that is called to cleanup when this state is no longer the
         current state. Should do two things:

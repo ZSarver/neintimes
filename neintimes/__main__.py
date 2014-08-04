@@ -53,11 +53,12 @@ class MainGame(state.State):
         pygame.event.pump()
 
     def switchin(self):
+        state.State.switchin(self)
         #register sprites
         self.screen.add(self.fgroup)
         #no widgets to register
         #switch camera
-        self.screen.cam = camera.roughTrack(Vector2D(0,0))
+        self.screen.cam = camera.roughTrack(self.p.position)
 
     def switchout(self):
         #unregister sprites
