@@ -7,7 +7,6 @@ from pygame.locals import *
 import pygame.font as ft
 
 #neintimes imports
-#from screen import Screen
 from data import *
 from vector import Vector2D
 
@@ -106,7 +105,45 @@ class EditableTextBox(TextBox):
                     else:
                         self.text = self.text + chr(event.key)
 
+class Slider(Widget):
+    def __init__(self, position, minval, maxval, defaultval, sSurface, rSurface):
+        """A class for a click-n-dragable slider widget. Intended for integers,
+        should work for floats.
+ 
+        position - A pair (x,y) describing the upper-left corner of the slider
+
+        minval - The minimum value the slider can set
+
+        maxval - The maximum value the slider can set
+
+        defaultval - The default value of the slider
+
+        sSurface - The surface to be rendered for the click-n-drag slider
+        itself
+
+        rSurface - The surface to be rendered representing the bounds of
+        slider"""
+        p = Rect(position, (rSurface.get_rect().width, sSurface.get_rect().height))
+        Widget.__init__(self, p)
+        self.currentval = defaultval
+        self.minval = minval
+        self.maxval = maxval
+        self.sSurface = sSurface
+        self.rSurface = rSurface
+    #def handleInput(self, event):
+    def draw(self, deltaT):
+        drawsurface = pygame.Surface((self.position.width, self.position.height))
+        #draw retainer
+        drawsurface.blit(self.rSurface, (0,self.position.height/2))
+        #draw slider
+        sliderpos = (((self.currentval - self.minval)* self.position.width) / (self.maxval - self.minval)) - self.sSurface.get_rect().width/2
+        drawsurface.blit(self.sSurface, (sliderpos, 0))
+        return drawsurface
+    def size(self):
+        return self.position
+        
 if __name__ == "__main__":
+    from screen import Screen
     pygame.init()
     screen = Screen(640,480)
     rsurface = loadsurface("rbutton.png")
@@ -124,6 +161,14 @@ if __name__ == "__main__":
 
     etb = EditableTextBox((300,300), font, "...", (0,0,0), (255,255,255))
     screen.addWidget(etb)
+
+    rslider = loadsurface("rslider.png")
+    sslider = loadsurface("sslider.png")
+    slider = Slider((200, 400), 19, 87, 33, sslider, rslider)
+    screen.addWidget(slider)
+
+    sb = TextBox((375, 400), font, str(slider.currentval), (0,0,255), (0,0,0))
+    screen.addWidget(sb)
 
     while True:
         for i in pygame.event.get():
