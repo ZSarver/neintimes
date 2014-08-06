@@ -54,7 +54,7 @@ class Button(Widget):
         return self.position
 
 class TextBox(Widget):
-    def __init__(self, position, font, text="", textcolor=(0,0,255), bgcolor=None):
+    def __init__(self, position, font, text="", textcolor=(0,0,255), bgcolor=(0,0,0)):
         """A non-user-editable text box for displaying things on screen.
         
         font - a pygame.freetype.Font object. Size, style, text color,
@@ -88,10 +88,23 @@ class TextBox(Widget):
     @text.setter
     def text(self, value):
         self._text = value
-        
+
+class UpdatingTextBox(TextBox):
+    def __init__(self, position, font, callback, textcolor=(0,0,255), bgcolor=(0,0,0)):
+        """A textbox that rather having a static text string, updates what it
+        what it displays by calling a callback function every frame. All
+        arguments as in TextBox except
+
+        callback - A callback function that will be called every frame.
+        Should return a value."""
+        TextBox.__init__(self, position, font, "", textcolor, bgcolor)
+        self.callback = callback
+    @property
+    def text(self):
+        return str(self.callback())
 
 class EditableTextBox(TextBox):
-    def __init__(self, position, font, text="...", textcolor=(0,0,255), bgcolor=None):
+    def __init__(self, position, font, text="...", textcolor=(0,0,255), bgcolor=(0,0,0)):
         TextBox.__init__(self, position, font, text, textcolor, bgcolor)
         self.capturing = False
     def handleInput(self,event):
@@ -165,6 +178,8 @@ class Slider(Widget):
         return drawsurface
     def size(self):
         return self.position
+    def getCurrentVal(self):
+        return self.currentval
         
 if __name__ == "__main__":
     from screen import Screen
@@ -172,11 +187,11 @@ if __name__ == "__main__":
     screen = Screen(640,480)
     rsurface = loadsurface("rbutton.png")
     dsurface = loadsurface("dbutton.png")
-    def callback():
+    def cb():
         print "Hello buttons!"
     position = Rect(100,100,150,50)
 
-    btn = Button(position, rsurface, dsurface, callback)
+    btn = Button(position, rsurface, dsurface, cb)
     screen.addWidget(btn)
 
     font = ft.SysFont("Courier New",30)
@@ -191,8 +206,8 @@ if __name__ == "__main__":
     slider = Slider((200, 400), 19, 87, 33, sslider, rslider)
     screen.addWidget(slider)
 
-    sb = TextBox((375, 400), font, slider.currentval, (0,0,255), (0,0,0))
-    screen.addWidget(sb)
+    utb = UpdatingTextBox((375, 400), font, slider.getCurrentVal)
+    screen.addWidget(utb)
 
     while True:
         for i in pygame.event.get():
@@ -201,7 +216,3 @@ if __name__ == "__main__":
             screen.handleWidgetInput(i)
         screen.update(Vector2D(0,0))
         pygame.event.pump()
-        #since python doesn't really have pointers, we need to manually
-        #update textboxes. I really need to figure out a better way to
-        #do this.
-        sb.text = slider.currentval

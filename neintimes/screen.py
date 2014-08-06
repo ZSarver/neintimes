@@ -44,8 +44,9 @@ class Screen:
 
         if _debug:
             font = ft.SysFont("Courier New", 30)
-            self.framerate = TextBox((10,10), font, "", (255,255,255), (0,0,0))
+            self.framerate = UpdatingTextBox((10,10), font, self.clock.get_fps, (255,255,255), (0,0,0))
             self.addWidget(self.framerate)
+            print "Debug!"
 
     def update(self, playerpos):
         self.deltaT = self.clock.tick(60) #tick! limit to 60fps
@@ -69,8 +70,6 @@ class Screen:
         self.stars.update((self.offset.x, self.offset.y))
 
     def draw(self):
-        if _debug:
-            self.framerate.text = str(self.clock.get_fps())
         self.stars.draw(self.displaysurface,(self.offset.x, self.offset.y))
         for g in self.groups:
             g.draw(self.displaysurface)
