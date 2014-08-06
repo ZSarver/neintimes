@@ -75,13 +75,19 @@ class TextBox(Widget):
         ft.init() #initialize the font module only if we need to
         #multiple initializations are safe
         self.font = font
-        self.text = text
+        self._text = text
         self.textcolor = textcolor
         self.bgcolor = bgcolor
     def draw(self, deltaT):
         return self.font.render(self.text, True, self.textcolor, self.bgcolor)
     def size(self):
         return Rect(self.position, self.font.size(self.text))
+    @property
+    def text(self):
+        return str(self._text)
+    @text.setter
+    def text(self, value):
+        self._text = value
         
 
 class EditableTextBox(TextBox):
@@ -129,15 +135,33 @@ class Slider(Widget):
         self.minval = minval
         self.maxval = maxval
         self.sSurface = sSurface
+        sliderx = (((self.currentval - self.minval)* self.position.width) / (self.maxval - self.minval)) - self.sSurface.get_width()/2
+        self.sliderpos = Rect((self.sSurface.get_width(), self.sSurface.get_height()), (sliderx + self.position.x, self.position.y))
         self.rSurface = rSurface
-    #def handleInput(self, event):
+        self.moveAction = False
+    def handleInput(self, event):
+        if event.type == MOUSEBUTTONDOWN:
+            if self.sliderpos.collidepoint(event.pos):
+                self.moveAction = True
+            else:
+                self.moveAction = False
+        if event.type == MOUSEMOTION and self.moveAction:
+            self.sliderpos.x = event.pos[0]
+            self.currentval = int(((float(self.sliderpos.x) - float(self.position.x))/float(self.position.width))*float(self.maxval))
+            if self.currentval > self.maxval:
+                self.currentval = self.maxval
+            if self.currentval < self.minval:
+                self.currentval = self.minval
+        if event.type == MOUSEBUTTONUP:
+            self.moveAction = False
     def draw(self, deltaT):
         drawsurface = pygame.Surface((self.position.width, self.position.height))
         #draw retainer
         drawsurface.blit(self.rSurface, (0,self.position.height/2))
         #draw slider
-        sliderpos = (((self.currentval - self.minval)* self.position.width) / (self.maxval - self.minval)) - self.sSurface.get_rect().width/2
-        drawsurface.blit(self.sSurface, (sliderpos, 0))
+        sliderx = (((self.currentval - self.minval)* self.position.width) / (self.maxval - self.minval)) - self.sSurface.get_width()/2
+        self.sliderpos.x = sliderx + self.position.x
+        drawsurface.blit(self.sSurface, (sliderx, 0))
         return drawsurface
     def size(self):
         return self.position
@@ -167,7 +191,7 @@ if __name__ == "__main__":
     slider = Slider((200, 400), 19, 87, 33, sslider, rslider)
     screen.addWidget(slider)
 
-    sb = TextBox((375, 400), font, str(slider.currentval), (0,0,255), (0,0,0))
+    sb = TextBox((375, 400), font, slider.currentval, (0,0,255), (0,0,0))
     screen.addWidget(sb)
 
     while True:
@@ -177,3 +201,7 @@ if __name__ == "__main__":
             screen.handleWidgetInput(i)
         screen.update(Vector2D(0,0))
         pygame.event.pump()
+        #since python doesn't really have pointers, we need to manually
+        #update textboxes. I really need to figure out a better way to
+        #do this.
+        sb.text = slider.currentval
