@@ -37,8 +37,8 @@ class SimpleEditorSprite(LocalSprite):
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
         self.rect = self.image.get_rect()
 
-    def setpos(self, spacialoffset):
-        self.position = spacialoffset + Vector2D(320,240)
+    def setpos(self, spacialoffset, screen):
+        self.position = spacialoffset + Vector2D(screen.x/2,screen.y/2)
 
     def setaim(self, aimoffset):
         self.aim = aimoffset
@@ -91,7 +91,7 @@ class FormationEditor(State):
         for i in range(len(self.slotSprites)):
             a = args[0].getSlot(i)
             self.slotSprites[i][0] = a
-            self.slotSprites[i][1].setpos(a.spatialOffset)
+            self.slotSprites[i][1].setpos(a.spatialOffset, self.screen)
             self.slotSprites[i][1].setaim(a.angularOffset)
         self.screen.add(self.drawgroup)
         #no widgets
