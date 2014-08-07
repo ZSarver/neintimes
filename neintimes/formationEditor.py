@@ -1,5 +1,4 @@
 #python imports
-import cPickle as pickle
 import math
 
 #pygame imports
@@ -109,16 +108,18 @@ class FormationEditor(State):
         self.screen.cam = camera.constant(Vector2D(0,0))
     
     def switchout(self):
-        #unregister sprites
-        self.screen.remove(self.drawgroup)
+        self.screen.remove(self.drawgroup) #unregister sprites
         #unregister widgets
         if self.sidebarActive:
-	    self.cleanSidebar()
+	    self.cleanSidebar(self.selected)
 	    self.sidebarActive = False
 
     def handlekeyboard(self,event):
         if event.key == K_TAB:
-            statemanager.switch("game")
+	    fleet = Formation([])
+	    for i in self.slotSprites:
+		fleet.addSlot(i[0])
+	    statemanager.switch("game", fleet)
 
     def handlemousedown(self,event):
         if event.button == MOUSE_LB and not self.rotateAction:
@@ -127,9 +128,13 @@ class FormationEditor(State):
             #select a ship
             for i in self.slotSprites:
                 if i[1].rect.collidepoint(event.pos):
+		    old = self.selected
                     self.clicked = i
                     self.selected = i
                     #bring up sidebar
+		    if self.sidebarActive: 
+			#if the sidebar is already active, clean up the old widgets
+			self.cleanSidebar(old)
                     self.createSidebar()
         if event.button == MOUSE_RB and not self.moveAction:
             #prevent moving and rotating at the same time
@@ -137,9 +142,13 @@ class FormationEditor(State):
             #select a ship
             for i in self.slotSprites:
                 if i[1].rect.collidepoint(event.pos):
+		    old = self.selected
                     self.clicked = i
                     self.selected = i
                     #bring up sidebar
+		    if self.sidebarActive: 
+			#if the sidebar is already active, clean up the old widgets
+			self.cleanSidebar(old)
                     self.createSidebar()
 
     def handlemouseup(self,event):
@@ -159,8 +168,6 @@ class FormationEditor(State):
             self.clicked[0].angularOffset = self.clicked[1].aim
 
     def createSidebar(self):
-	if self.sidebarActive: #if the sidebar is already active, clean up the old widgets
-	    self.cleanSidebar()
 	self.sidebarActive = True
         startx = (self.screen.x * 2)/3 #use the right 1/3 of the screen
         #ship name
@@ -190,36 +197,14 @@ class FormationEditor(State):
         for k,w in self.widgets.iteritems():
 	    self.screen.addWidget(w)
         
-    def cleanSidebar(self):
+    def cleanSidebar(self, old):
+	if old is not None:
+	    #save old time offset
+	    old[0].timeOffset = self.widgets["sidebarShipTOSlider"].currentval
 	for k,w in self.widgets.iteritems():
 	    self.screen.removeWidget(w)
 	    w = None
-
-    def save(self,filename=None):
-        fleet = Formation([])
-        for i in self.slotSprites:
-            fleet.addSlot(i[0])
-        if filename is None:
-            f = open(PICKLE_JAR, "wb")
-        else:
-            f = open(filename, "wb")
-        pickle.dump(fleet,f,PICKLE_PROTOCOL)
-        f.close()
-
-    def load(self,filename=None):
-        if filename is None:
-            f = open(PICKLE_JAR, "rb")
-        else:
-            f = open(filename, "rb")
-        fleet = None
-        fleet = pickle.load(f)
-        f.close()
-        #now reconstruct the slotSprites list
-        for i in range(fleet.numSlots()):
-            self.slotSprites[i][0] = fleet.getSlot(i)
-            self.slotSprites[i][1].position = fleet.getSlot(i).spatialOffset
-            self.slotSprites[i][1].update(fleet.getSlot(i).angularOffset)
-            
+        
 if __name__ == "__main__":
     pygame.init()
     screen = Screen(640,480)

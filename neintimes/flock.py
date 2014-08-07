@@ -51,7 +51,7 @@ class Flock(LocalGroup):
         Group.clear(self, screen, background)
 
     def update(self):
-        """Updates, calculating everything each individual boid needs
+	"""Updates, calculating everything each individual boid needs
         to know to flock effectively."""
         self.shotgroup.update()
         p = self.anchor.position
@@ -77,3 +77,8 @@ class Flock(LocalGroup):
             targetAim = a + formationSlot.angularOffset
             ship.update(targetLocation, targetAim, m,f)
         self.anchor.update()
+
+    def changeFormation(self, formation):
+	self.formation = formation
+	for i in range(len(self.squad)):
+	    self.squad[i].formationSlot = self.formation.getSlot(i)

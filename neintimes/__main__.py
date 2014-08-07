@@ -17,6 +17,7 @@ import camera
 import random
 from formationEditor import FormationEditor
 import state
+from formation import Formation
 
 class MainGame(state.State):
     def __init__(self, screen):
@@ -52,8 +53,16 @@ class MainGame(state.State):
         self.screen.update(self.p.position) #center camera on player
         pygame.event.pump()
 
-    def switchin(self):
+    def switchin(self, *args):
+	"""args should be a tuple of exactly 1 element, a Formation object"""
         state.State.switchin(self)
+        if len(args) > 1:
+	    raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
+	if len(args) == 1:
+		if not isinstance(args[0],Formation):
+		    raise ValueError("MainGame.switchin() needs a Formation object!")
+	if len(args) == 1:
+	    self.fgroup.changeFormation(args[0])
         #register sprites
         self.screen.add(self.fgroup)
         #no widgets to register
