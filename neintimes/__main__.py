@@ -45,7 +45,7 @@ class MainGame(state.State):
                 exit()
         (thrustDirection, boost, rotation, shooting, changeState)  = getInputActions()
         if changeState:
-            state.statemanager.switch("fe")
+            state.statemanager.switch("fe", self.fgroup.formation)
         self.p.playerInput(thrustDirection, boost, rotation, shooting)
 
         self.fgroup.update()

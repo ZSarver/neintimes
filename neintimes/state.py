@@ -5,13 +5,15 @@ class StateManager(object):
         """Game state manager. Switches smoothly between various screens."""
         self.state = None
         self.states = {}
-    def switch(self, name):
+    def switch(self, name, *args):
         """name should be an object registered to states with the addstate() 
-        method"""
+        method
+
+        -args for extra, state-specific arguments"""
         if self.state is not None:
             self.state.switchout()
         self.state = self.states[name]
-        self.state.switchin()
+        self.state.switchin(*args)
     def addstate(self, state, name):
         """State should be a State object, and name should be a string."""
         self.states[name] = (state)

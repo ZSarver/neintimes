@@ -29,10 +29,20 @@ class SimpleEditorSprite(LocalSprite):
         self.rect = image.get_rect()
         self.aim = 0.0
 
-    def update(self, aimoffset):
-        #update aim
+    def updatepos(self, spacialoffset):
+        self.position = spacialoffset
+
+    def updateaim(self, aimoffset):
         self.aim = self.aim + aimoffset
-        self.image = pygame.transform.rotate(self.originalimage,degrees(float(self.aim)))
+        self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
+        self.rect = self.image.get_rect()
+
+    def setpos(self, spacialoffset):
+        self.position = spacialoffset + Vector2D(320,240)
+
+    def setaim(self, aimoffset):
+        self.aim = aimoffset
+        self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
         self.rect = self.image.get_rect()
         
 class FormationEditor(State):
@@ -71,14 +81,23 @@ class FormationEditor(State):
         self.screen.update(Vector2D(0,0))
         pygame.event.pump()
 
-    def switchin(self):
+    def switchin(self, *args):
+        """args should be a single-element tuple consisting of a
+        formation"""
+        if len(args) != 1:
+            raise ValueError("formationEditor.switchin() should have exactly 1 element!")
         State.switchin(self)
         #register sprites
+        for i in range(len(self.slotSprites)):
+            a = args[0].getSlot(i)
+            self.slotSprites[i][0] = a
+            self.slotSprites[i][1].setpos(a.spatialOffset)
+            self.slotSprites[i][1].setaim(a.angularOffset)
         self.screen.add(self.drawgroup)
         #no widgets
         #camera
         self.screen.cam = camera.constant(Vector2D(0,0))
-
+    
     def switchout(self):
         #unregister sprites
         self.screen.remove(self.drawgroup)
@@ -127,7 +146,7 @@ class FormationEditor(State):
             self.selected[0].spatialOffset = self.selected[0].spatialOffset + Vector2D(*event.rel)
             self.selected[1].position = self.selected[1].position + Vector2D(*event.rel)
         if self.rotateAction and (self.selected is not None):
-            self.selected[1].update(0.01 * Vector2D(*event.rel).magnitude)
+            self.selected[1].updateaim(0.01 * Vector2D(*event.rel).magnitude)
             self.selected[0].angularOffset = self.selected[1].aim
 
     def save(self,filename=None):
