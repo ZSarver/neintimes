@@ -41,7 +41,7 @@ class Button(Widget):
     def handleInput(self,event):
         if event.type == MOUSEBUTTONDOWN:
             if self.position.collidepoint(event.pos):
-                callback()
+                self.callback()
                 self.animationtimer = 500
     def draw(self, deltaT):
         if self.animationtimer > 0:
@@ -126,8 +126,7 @@ class EditableTextBox(TextBox):
 
 class Slider(Widget):
     def __init__(self, position, minval, maxval, defaultval, sSurface, rSurface):
-        """A class for a click-n-dragable slider widget. Intended for integers,
-        should work for floats.
+        """A class for a click-n-dragable slider widget. Intended for integers.
  
         position - A pair (x,y) describing the upper-left corner of the slider
 
@@ -149,7 +148,7 @@ class Slider(Widget):
         self.maxval = maxval
         self.sSurface = sSurface
         sliderx = (((self.currentval - self.minval)* self.position.width) / (self.maxval - self.minval)) - self.sSurface.get_width()/2
-        self.sliderpos = Rect((self.sSurface.get_width(), self.sSurface.get_height()), (sliderx + self.position.x, self.position.y))
+        self.sliderpos = Rect((sliderx + self.position.x, self.position.y),(self.sSurface.get_width(), self.sSurface.get_height()))
         self.rSurface = rSurface
         self.moveAction = False
     def handleInput(self, event):

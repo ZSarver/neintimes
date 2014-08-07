@@ -1,11 +1,13 @@
 #python imports
 import cPickle as pickle
+import math
 
 #pygame imports
 import pygame
 import pygame.cursors
 import pygame.mouse
 from pygame.locals import *
+import pygame.font as ft
 
 #neintimes imports
 from screen import *
@@ -14,6 +16,7 @@ from vector import Vector2D
 from localsprite import *
 from data import loadsurface
 from state import *
+from gui import *
 
 #convenient constants
 MOUSE_LB = 1
@@ -51,10 +54,16 @@ class FormationEditor(State):
         #set up a list of [FormationSlot,SimpleEditorSprite] pairs
         self.slotSprites = []
         for i in range(9):
-            self.slotSprites.append([FormationSlot(Vector2D(i*40,50),0,None,0),SimpleEditorSprite(Vector2D(i*40,50),loadsurface("small2.png"))])
-        self.selected = None
+            fs = FormationSlot(Vector2D(i*40,50),0,None,0, str(i))
+            ses = SimpleEditorSprite(Vector2D(i*40,50),loadsurface("small2.png"))
+            self.slotSprites.append([fs,ses])
+        self.clicked = None #clicked for dragging/rotating
+        self.selected = None #selected for sidebar
         #set up a drawing group
         self.drawgroup = LocalGroup()
+	#set up widgets
+	self.widgets = {}
+	self.sidebarActive = False
         #set up sprites for all the ships in the formation
         for i in self.slotSprites:
             self.drawgroup.add(i[1])
@@ -68,6 +77,7 @@ class FormationEditor(State):
         
     def run(self):
         for i in pygame.event.get():
+            self.screen.handleWidgetInput(i)
             if i.type == QUIT:
                 exit()
             if i.type == MOUSEBUTTONUP:
@@ -101,19 +111,12 @@ class FormationEditor(State):
     def switchout(self):
         #unregister sprites
         self.screen.remove(self.drawgroup)
-        #no widgets
+        #unregister widgets
+        if self.sidebarActive:
+	    self.cleanSidebar()
+	    self.sidebarActive = False
 
     def handlekeyboard(self,event):
-        if event.key == K_s:
-            print "Enter filename to save. Enter nothing to cancel."
-            filename = raw_input("Filename?")
-            if filename != "":
-                self.save(filename)
-        if event.key == K_l:
-            print "Enter filename to load. Enter nothing to cancel."
-            filename = raw_input("Filename?")
-            if filename != "":
-                self.load(filename)
         if event.key == K_TAB:
             statemanager.switch("game")
 
@@ -124,30 +127,73 @@ class FormationEditor(State):
             #select a ship
             for i in self.slotSprites:
                 if i[1].rect.collidepoint(event.pos):
+                    self.clicked = i
                     self.selected = i
+                    #bring up sidebar
+                    self.createSidebar()
         if event.button == MOUSE_RB and not self.moveAction:
             #prevent moving and rotating at the same time
             self.rotateAction = True
             #select a ship
             for i in self.slotSprites:
                 if i[1].rect.collidepoint(event.pos):
+                    self.clicked = i
                     self.selected = i
+                    #bring up sidebar
+                    self.createSidebar()
 
     def handlemouseup(self,event):
         if event.button == MOUSE_LB and self.moveAction:
             self.moveAction = False
-            self.selected = None
+            self.clicked = None
         if event.button == MOUSE_RB and self.rotateAction:
             self.rotateAction = False
-            self.selected = None
+            self.clicked = None
 
     def handlemousemotion(self,event):
-        if self.moveAction and (self.selected is not None):
-            self.selected[0].spatialOffset = self.selected[0].spatialOffset + Vector2D(*event.rel)
-            self.selected[1].position = self.selected[1].position + Vector2D(*event.rel)
-        if self.rotateAction and (self.selected is not None):
-            self.selected[1].setaim((Vector2D(*event.pos) - self.selected[1].position).direction)
-            self.selected[0].angularOffset = self.selected[1].aim
+        if self.moveAction and (self.clicked is not None):
+            self.clicked[0].spatialOffset = self.clicked[0].spatialOffset + Vector2D(*event.rel)
+            self.clicked[1].position = self.clicked[1].position + Vector2D(*event.rel)
+        if self.rotateAction and (self.clicked is not None):
+            self.clicked[1].setaim((Vector2D(*event.pos) - self.clicked[1].position).direction)
+            self.clicked[0].angularOffset = self.clicked[1].aim
+
+    def createSidebar(self):
+	if self.sidebarActive: #if the sidebar is already active, clean up the old widgets
+	    self.cleanSidebar()
+	self.sidebarActive = True
+        startx = (self.screen.x * 2)/3 #use the right 1/3 of the screen
+        #ship name
+        font = ft.SysFont("Courier New", 20)
+        name = "Ship " + self.selected[0].name
+        self.widgets["sidebarShipName"] = TextBox((startx,10), font, name, (255,255,255),(0,0,0))
+        #spatial offset
+        def soCallback():
+            return "Spatial Offset " + str(self.selected[0].spatialOffset)
+        self.widgets["sidebarShipSOffset"] = UpdatingTextBox((startx,30), font, soCallback, (255,255,255),(0,0,0))
+        #angular offset
+        def aoCallback():
+            return "Angular Offset " + str(math.degrees(self.selected[0].angularOffset))
+        self.widgets["sidebarShipAOffset"] = UpdatingTextBox((startx, 50), font, aoCallback, (255,255,255), (0,0,0))
+        #time offset
+        rslider = loadsurface("rslider.png")
+        sslider = loadsurface("sslider.png")
+        to = self.selected[0].timeOffset
+        self.widgets["sidebarShipTOSlider"] = Slider((startx+15, 90), 0, 50, to, sslider, rslider)
+        #time offset labels
+        self.widgets["sidebarShipTOSliderMin"] = TextBox((startx, 90), font, "0", (255,0,0), (0,0,0))
+        w = self.widgets["sidebarShipTOSlider"].size().width
+        self.widgets["sidebarShipTOSliderMax"] = TextBox((startx+w+20,90), font, "50", (0,0,255), (0,0,0))
+        def toCallback():
+            return "Time Offset: " + str(self.widgets["sidebarShipTOSlider"].currentval)
+        self.widgets["sidebarShipTOSliderCur"] = UpdatingTextBox((startx,70), font, toCallback, (255,255,255), (0,0,0))
+        for k,w in self.widgets.iteritems():
+	    self.screen.addWidget(w)
+        
+    def cleanSidebar(self):
+	for k,w in self.widgets.iteritems():
+	    self.screen.removeWidget(w)
+	    w = None
 
     def save(self,filename=None):
         fleet = Formation([])

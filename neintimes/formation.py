@@ -5,7 +5,7 @@ from copy import deepcopy
 from math import pi
 
 class FormationSlot:
-    def __init__(self, spatialOffset=None, angularOffset=0, weapon=None, timeOffset=0 ):
+    def __init__(self, spatialOffset=None, angularOffset=0, weapon=None, timeOffset=0, name = "" ):
         zero = Vector2D(0,0)
         if spatialOffset == None:
             spatialOffset = zero
@@ -13,6 +13,7 @@ class FormationSlot:
         self.timeOffset = timeOffset
         self.angularOffset = angularOffset
         self.weapon = weapon
+        self.name = name
 
 class Formation:
     def __init__(self, slotList):
@@ -45,7 +46,7 @@ def testFormation():
         d = 60 
         v = vectorfromangle(a).mult(d)
         t = abs(i - 4) * 5
-        s = FormationSlot(v, a, None, t)
+        s = FormationSlot(v, a, None, t, str(i))
         l.append(s)
     f = Formation(l)
     return f

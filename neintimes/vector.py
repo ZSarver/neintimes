@@ -92,6 +92,9 @@ class Vector2D:
     def positive(self):
         return Vector2D(abs(self.x),abs(self.y))
 
+    def __str__(self):
+        return "(" + str(int(self.x)) + ", " + str(int(self.y)) + ")"
+
 def vectorfromangle(a,r=1):
     return Vector2D(r * cos(a),r * sin(a))
 
