@@ -146,7 +146,7 @@ class FormationEditor(State):
             self.selected[0].spatialOffset = self.selected[0].spatialOffset + Vector2D(*event.rel)
             self.selected[1].position = self.selected[1].position + Vector2D(*event.rel)
         if self.rotateAction and (self.selected is not None):
-            self.selected[1].updateaim(0.01 * Vector2D(*event.rel).magnitude)
+            self.selected[1].setaim((Vector2D(*event.pos) - self.selected[1].position).direction)
             self.selected[0].angularOffset = self.selected[1].aim
 
     def save(self,filename=None):
