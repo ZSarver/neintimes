@@ -1,4 +1,4 @@
-#Player.py - A class for the player
+#anchor.py
 
 import pygame
 from vector import *
@@ -15,31 +15,9 @@ baseSpeed = 6
 boostThrust = 4
 boostSpeed = 16
 
-#~ class PlayerGroup(LocalGroup):
-    #~ def __init__(self):
-        #~ Group.__init__(self)
-        #~ self.shotgroup = LocalGroup()
-#~ 
-    #~ def draw(self, screen):
-        #~ self.shotgroup.draw(screen)
-        #~ Group.draw(self, screen)
-#~ 
-    #~ def place(self, offset=Vector2D(0,0)):
-        #~ self.shotgroup.place(offset)
-        #~ LocalGroup.place(self, offset)
-#~ 
-    #~ def clear(self, screen, background):
-        #~ self.shotgroup.clear(screen, background)
-        #~ Group.clear(self, screen, background)
-#~ 
-    #~ def update(self):
-        #~ self.shotgroup.update()
+class Anchor(LocalSprite):
 
-
-
-class Player(LocalSprite):
-
-    def __init__(self, weap, image):
+    def __init__(self, image):
         Sprite.__init__(self)
         self.image = image
         self.originalimage = image
@@ -49,8 +27,6 @@ class Player(LocalSprite):
         self.rect = image.get_rect()
         self.squad = None
         self.shooting = False
-        if weap == None:#deprecate
-            self.weapon = weapon.testweapon()#deprecate
     def setSquad(self, squad):
         self.squad = squad
     def playerInput(self, relThrustVector, boost, rotationDir, shooting):
@@ -58,8 +34,6 @@ class Player(LocalSprite):
         self.aim += rotationSpeed * rotationDir 
         self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
         self.rect = self.image.get_rect()
-        #~ thrustVector = relThrustVector.rotate(self.aim).mult(t)
-        #~ self.propel(thrustVector, maxSpeed)
         thrustVector = relThrustVector.rotate(self.aim).mult(thrust)
         self.propel(thrustVector, baseSpeed)
 
@@ -69,8 +43,3 @@ class Player(LocalSprite):
     def propel(self, vector, maxSpeed):
         self.momentum = (self.momentum + vector).crop_ip(maxSpeed)
 
-    #~ def shoot(self):
-        #~ g = self.groups()[0].shotgroup
-        #~ self.weapon.fire(self.position, self.aim, self.momentum, g)
-        #~ for s in self.squad:
-            #~ s.shoot()

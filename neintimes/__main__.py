@@ -12,7 +12,7 @@ from math import *
 from weaponry import *
 from input import *
 from statuseffects import *
-import player
+import anchor
 import camera
 import random
 from formationEditor import FormationEditor
@@ -31,7 +31,7 @@ class MainGame(state.State):
         #~ image = pygame.Surface((15, 15))
         #~ image.fill((0,255,0))
         #~ image.convert()
-        self.p = player.Player(None, pimage)
+        self.p = anchor.Anchor(pimage)
         for i in range(9):
             b = Boid(Vector2D(0,0),image)
             self.fgroup.addSquad(b)
