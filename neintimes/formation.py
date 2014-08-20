@@ -20,6 +20,8 @@ class Formation:
         self.slotList = []
         for s in slotList:
             self.slotList.append(s)
+    def __iter__(self):
+        return self.slotList.__iter__()
     def numSlots(self):
         return len(self.slotList)
     def addSlot(self, s):

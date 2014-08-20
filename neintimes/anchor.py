@@ -17,12 +17,19 @@ boostSpeed = 16
 
 class Anchor(LocalSprite):
 
-    def __init__(self, image):
+    def __init__(self, position, image, behavior=None, target=None):
         Sprite.__init__(self)
+        if behavior is None:
+            def b(selfanchor):
+                pass
+            self.behavior = b
+        else:
+            self.behavior = behavior
+        self.target = target
         self.image = image
         self.originalimage = image
         self.aim = 0
-        self.position = Vector2D(0,0)
+        self.position = position
         self.momentum = Vector2D(0,0)
         self.rect = image.get_rect()
         self.squad = None
@@ -39,6 +46,7 @@ class Anchor(LocalSprite):
 
     def update(self):  
         self.position += self.momentum
+        self.behavior(self)
         
     def propel(self, vector, maxSpeed):
         self.momentum = (self.momentum + vector).crop_ip(maxSpeed)

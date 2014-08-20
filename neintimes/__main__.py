@@ -18,26 +18,28 @@ import random
 from formationEditor import FormationEditor
 import state
 from formation import Formation
+from enemy import *
 
 class MainGame(state.State):
     def __init__(self, screen):
         """ your app starts here"""
         state.State.__init__(self, screen)
         #create game objects
-        self.fgroup = Flock(1.2,0.0)
+        self.fgroup = Flock(1.2)
         #sprite groups must be added to the screen to be drawn
         image = loadsurface("small2.png")
         pimage = loadsurface("anchor.png")
-        #~ image = pygame.Surface((15, 15))
-        #~ image.fill((0,255,0))
-        #~ image.convert()
-        self.p = anchor.Anchor(pimage)
+        #player stuff
+        self.p = anchor.Anchor(Vector2D(0,0),pimage)
         for i in range(9):
             b = Boid(Vector2D(0,0),image)
             self.fgroup.addSquad(b)
         self.fgroup.addAnchor(self.p)
         t = testEffect()
         applyEffect(b, None, t)
+        #create an enemy
+        self.enemy = spawnEnemy(Vector2D(100,100), 0, defaultBehavior, testFormation(), image, self.p)
+        self.screen.add(self.enemy)
 
     def run(self):
         #deal with eventlist
@@ -50,6 +52,7 @@ class MainGame(state.State):
         self.p.playerInput(thrustDirection, boost, rotation, shooting)
 
         self.fgroup.update()
+        self.enemy.update()
         self.screen.update(self.p.position) #center camera on player
         pygame.event.pump()
 
@@ -79,7 +82,7 @@ if __name__ == "__main__":
     print "Initializing pygame..."
     pygame.init()
     print "Creating screen"
-    screen = Screen(640,480,camera.roughTrack(0))
+    screen = Screen(800,600,camera.roughTrack(0))
     game = MainGame(screen)
     editor = FormationEditor(screen)
 

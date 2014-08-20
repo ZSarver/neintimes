@@ -12,13 +12,12 @@ import pprint
 MAX_HISTORY_FRAMES = 300
 
 class Flock(LocalGroup):
-    def __init__(self, accelConst=1.2, seperation=30.0, formation=None):
+    def __init__(self, accelConst=1.2, formation=None):
         Group.__init__(self)
         self.centerOfMass = None
         self.momentum = None
         self.targetLocation = None
         self.accelConst = accelConst
-        self.seperation = seperation#deprecate
         self.shotgroup = LocalGroup()
         self.squad = []
         self.anchor = None
