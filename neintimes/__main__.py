@@ -38,7 +38,7 @@ class MainGame(state.State):
         t = testEffect()
         applyEffect(b, None, t)
         #create an enemy
-        self.enemy = spawnEnemy(Vector2D(100,100), 0, defaultBehavior, testFormation(), image, self.p)
+        self.enemy = spawnEnemy(Vector2D(100,100), 0, defaultBehavior, enemyformation(), image, pimage, self.p)
         self.screen.add(self.enemy)
 
     def run(self):

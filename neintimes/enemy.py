@@ -2,6 +2,7 @@ from boid import *
 from formation import *
 from anchor import Anchor
 from flock import Flock
+from weaponry import *
 
 #~ class enemy():
     #~ def __init__(self, position, behavior=None):
@@ -11,9 +12,9 @@ from flock import Flock
         #~ if behavior is None:
             #~ self.behavior = defaultBehavior
                
-def spawnEnemy(position, angle, behavior, formation, image, target):
+def spawnEnemy(position, angle, behavior, formation, image, aimage, target):
     enemygroup = Flock(1.2, formation)
-    anchor = Anchor(position, image, behavior, target)
+    anchor = Anchor(position, aimage, behavior, target)
     for slot in formation:
         p = position + slot.spatialOffset.rotate(angle) 
         a = angle + slot.angularOffset
@@ -25,7 +26,7 @@ def spawnEnemy(position, angle, behavior, formation, image, target):
 
 
 def defaultBehavior(myanchor):
-    goalvector = myanchor.target.position - myanchor.position
-    myanchor.aim = goalvector.direction
-    myanchor.propel(goalvector, 5)
-
+	goalvector = myanchor.target.position - myanchor.position
+	myanchor.aim = goalvector.direction
+	myanchor.propel(goalvector, 4)
+	myanchor.shoot()
