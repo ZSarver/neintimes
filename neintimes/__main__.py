@@ -67,9 +67,13 @@ class MainGame(state.State):
         enemyShipsHit = groupcollide(self.enemy, self.fgroup.shotgroup,
                                      False, False, collide_circle)
         
-        for key,value in playerShipsHit.iteritems():
+        for ship in playerShipsHit.iterkeys():
+            for shot in playerShipsHit[ship]:
+                shot.impact(ship)
             print "Player ship " + str(key) + " hit!"
-        for key,value in enemyShipsHit.iteritems():
+        for ship in enemyShipsHit.iterkeys():
+            for shot in enemyShipsHit[ship]:
+                shot.impact(ship)
             print "Enemy ship " + str(key) + " hit!"
             
     def switchin(self, *args):
