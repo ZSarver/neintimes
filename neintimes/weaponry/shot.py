@@ -29,6 +29,7 @@ class Shot(LocalSprite):
         self.size = size
         self.age = 0.0
         self.lifetime=lifetime
+        self.payload=payload
 
         if image == None: #TODO: crash here
             image = pygame.Surface((5* size, 5 * size))
@@ -62,6 +63,7 @@ class Shot(LocalSprite):
 
     def impact(self, target):
         self.payload(self,target)
+        self.kill()
 
 def floatrange(x1, x2, num):
     a = []
