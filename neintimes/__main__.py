@@ -11,6 +11,7 @@ from flock import *
 from data import *
 from math import *
 from weaponry import *
+from weaponry.weapons import *
 from input import *
 from statuseffects import *
 import anchor
@@ -33,7 +34,7 @@ class MainGame(state.State):
         #player stuff
         self.p = anchor.Anchor(Vector2D(0,0),pimage)
         for i in range(9):
-            b = Boid(Vector2D(0,0),image, weap=weapon.machinegun())
+            b = Boid(Vector2D(0,0),image, weap=weapons.weapons.machinegun())
             self.fgroup.addSquad(b)
         self.fgroup.addAnchor(self.p)
         t = testEffect()

@@ -4,6 +4,7 @@ from vector import *
 from copy import deepcopy
 from math import pi
 from weaponry import *
+from weaponry.weapons import *
 
 class FormationSlot:
     def __init__(self, spatialOffset=None, angularOffset=0, weapon=None, timeOffset=0, name = "" ):
@@ -58,7 +59,7 @@ def enemyformation():
     v1 = Vector2D(-30,0)
     v2 = Vector2D(-50,-50)
     v3 = Vector2D(-50,50)
-    w = weapon.enemyweapon()
+    w = weapons.enemyweapon()
     s1 = FormationSlot(v1,0, weapon=w)
     s2 = FormationSlot(v2,-pi/6, weapon=w)
     s3 = FormationSlot(v3,pi/6, weapon=w)

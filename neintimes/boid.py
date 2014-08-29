@@ -6,6 +6,7 @@ from pygame.sprite import *
 from localsprite import *
 from math import *
 from weaponry import *
+from weaponry.weapons import *
 import pprint
 import random
 
@@ -36,7 +37,7 @@ class Boid(LocalSprite):
         self.rotationspeed = rotationspeed
         self.statusEffects=[]
         if weap == None:
-            self.weapon = weapon.testweapon()
+            self.weapon = weapons.testweapon()
         else:
             self.weapon = weap
     def addEffect(self,effect):
