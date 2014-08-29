@@ -1,6 +1,7 @@
 
 #pygame imports
 import pygame
+from pygame.sprite import *
 
 #neintimes imports
 from pygame.locals import *
@@ -46,6 +47,7 @@ class MainGame(state.State):
         for i in pygame.event.get():
             if i.type == QUIT:
                 exit()
+        self.checkCollisions()
         (thrustDirection, boost, rotation, shooting, changeState)  = getInputActions()
         if changeState:
             state.statemanager.switch("fe", self.fgroup.formation)
@@ -55,17 +57,30 @@ class MainGame(state.State):
         self.enemy.update()
         self.screen.update(self.p.position) #center camera on player
         pygame.event.pump()
-
+        
+    def checkCollisions(self):
+        #player/enemy bullet collisions
+        playerShipsHit = groupcollide(self.fgroup, self.enemy.shotgroup,
+                                      False, False, collide_circle)
+                                      
+        enemyShipsHit = groupcollide(self.enemy, self.fgroup.shotgroup,
+                                     False, False, collide_circle)
+        
+        for key,value in playerShipsHit.iteritems():
+            print "Player ship " + str(key) + " hit!"
+        for key,value in enemyShipsHit.iteritems():
+            print "Enemy ship " + str(key) + " hit!"
+            
     def switchin(self, *args):
-	"""args should be a tuple of exactly 1 element, a Formation object"""
+    """args should be a tuple of exactly 1 element, a Formation object"""
         state.State.switchin(self)
         if len(args) > 1:
-	    raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
-	if len(args) == 1:
-		if not isinstance(args[0],Formation):
-		    raise ValueError("MainGame.switchin() needs a Formation object!")
-	if len(args) == 1:
-	    self.fgroup.changeFormation(args[0])
+        raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
+    if len(args) == 1:
+        if not isinstance(args[0],Formation):
+            raise ValueError("MainGame.switchin() needs a Formation object!")
+    if len(args) == 1:
+        self.fgroup.changeFormation(args[0])
         #register sprites
         self.screen.add(self.fgroup)
         #no widgets to register

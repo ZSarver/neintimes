@@ -55,12 +55,12 @@ def testFormation():
     return f
 
 def enemyformation():
-	v1 = Vector2D(-30,0)
-	v2 = Vector2D(-50,-50)
-	v3 = Vector2D(-50,50)
-	w = weapon.enemyweapon()
-	s1 = FormationSlot(v1,0, weapon=w)
-	s2 = FormationSlot(v2,-pi/6, weapon=w)
-	s3 = FormationSlot(v3,pi/6, weapon=w)
-	f = Formation([s1,s2,s3])
-	return f
+    v1 = Vector2D(-30,0)
+    v2 = Vector2D(-50,-50)
+    v3 = Vector2D(-50,50)
+    w = weapon.enemyweapon()
+    s1 = FormationSlot(v1,0, weapon=w)
+    s2 = FormationSlot(v2,-pi/6, weapon=w)
+    s3 = FormationSlot(v3,pi/6, weapon=w)
+    f = Formation([s1,s2,s3])
+    return f

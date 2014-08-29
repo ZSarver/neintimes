@@ -22,6 +22,8 @@ class Boid(LocalSprite):
         Sprite.__init__(self)
         self.image = image
         self.originalimage = image
+        self.radius = max(image.get_width()/3, image.get_height()/3)
+        print "Radius = " + str(self.radius)
         self.rect = image.get_rect()
         self.position = position
         self.aim = aim
