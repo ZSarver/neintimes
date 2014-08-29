@@ -38,6 +38,7 @@ class MainGame(state.State):
         self.fgroup.addAnchor(self.p)
         t = testEffect()
         applyEffect(b, None, t)
+        self.screen.add(self.fgroup)
         #create an enemy
         self.enemy = spawnEnemy(Vector2D(100,100), 0, defaultBehavior, enemyformation(), image, pimage, self.p)
         self.screen.add(self.enemy)
@@ -72,20 +73,20 @@ class MainGame(state.State):
             print "Enemy ship " + str(key) + " hit!"
             
     def switchin(self, *args):
-    """args should be a tuple of exactly 1 element, a Formation object"""
+        """args should be a tuple of exactly 1 element, a Formation object"""
         state.State.switchin(self)
         if len(args) > 1:
-        raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
-    if len(args) == 1:
-        if not isinstance(args[0],Formation):
-            raise ValueError("MainGame.switchin() needs a Formation object!")
-    if len(args) == 1:
-        self.fgroup.changeFormation(args[0])
-        #register sprites
-        self.screen.add(self.fgroup)
-        #no widgets to register
-        #switch camera
-        self.screen.cam = camera.roughTrack(self.p.position)
+            raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
+        if len(args) == 1:
+            if not isinstance(args[0],Formation):
+                raise ValueError("MainGame.switchin() needs a Formation object!")
+        if len(args) == 1:
+            self.fgroup.changeFormation(args[0])
+            #register sprites
+            self.screen.add(self.fgroup)
+            #no widgets to register
+            #switch camera
+            self.screen.cam = camera.roughTrack(self.p.position)
 
     def switchout(self):
         #unregister sprites
