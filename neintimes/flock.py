@@ -19,6 +19,7 @@ class Flock(LocalGroup):
         self.targetLocation = None
         self.accelConst = accelConst
         self.shotgroup = LocalGroup()
+        self.anchorgroup = LocalGroup()
         self.squad = []
         self.anchor = None
         if formation == None:
@@ -33,16 +34,18 @@ class Flock(LocalGroup):
         boid.formationSlot = self.formation.getSlot(l)
         self.squad.append(boid)
     def addAnchor(self, anchor):
-        self.add(anchor)
         self.anchor = anchor
-        anchor.setSquad(self.squad)
-        anchor.history = []
+        self.anchorgroup.add(self.anchor)
+        self.anchor.setSquad(self.squad)
+        self.anchor.history = []
     def draw(self, screen):
+        self.anchorgroup.draw(screen)
         self.shotgroup.draw(screen)
-        Group.draw(self, screen)
+        LocalGroup.draw(self, screen)
 
     def place(self, offset=Vector2D(0,0)):
         self.shotgroup.place(offset)
+        self.anchorgroup.place(offset)
         LocalGroup.place(self, offset)
 
     def clear(self, screen, background):
