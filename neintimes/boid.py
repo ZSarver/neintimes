@@ -34,11 +34,23 @@ class Boid(LocalSprite):
         self.islocked = False
         self.maxSpeed = maxSpeed
         self.rotationspeed = rotationspeed
+        self.statusEffects=[]
         if weap == None:
             self.weapon = weapon.testweapon()
         else:
             self.weapon = weap
+    def addEffect(self,effect):
+        self.statusEffects.add(effect)
+    def removeEffect(self, index):
+        self.statusEffects.pop(index)
     def update(self, targetLocation, targetAim, targetMomentum, shooting):
+        for index, effect in enumerate(self.statusEffects):
+            effect.update(self, 
+                          targetLocation, 
+                          targetAim, 
+                          targetMomentum, 
+                          shooting,
+                          effectIndex=index)
         self.weapon.cool()
         d = distance(targetLocation, self.position)
         if d  < FORMATION_LOCK_DISTANCE:
