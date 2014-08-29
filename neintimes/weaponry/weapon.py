@@ -3,7 +3,7 @@
 from shot import *
 from route import *
 from vector import *
-
+from statuseffects import *
 
 def nopayload():
     def p(self,target=None):
@@ -11,6 +11,12 @@ def nopayload():
         pass
     return p
 
+def effectPayload(effecttemplate):
+    def p(self,target=None):
+        assert(target is not None)
+        applyEffect(target)
+    return p
+            
 class Weapon:
     def __init__(self, f = None, cooldown = None):
         assert(f is not None)
