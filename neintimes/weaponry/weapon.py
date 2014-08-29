@@ -1,5 +1,9 @@
 #weapon.py
 
+#python imports
+import random
+
+#neintimes imports
 from shot import *
 from route import *
 from vector import *
@@ -51,6 +55,10 @@ def testweapon():
     
 def enemyweapon():
     return flap(cooldown=200,payload=nopayload())
+    
+def machinegun(payload=nopayload()):
+    return jitter(speed=10.0, spread=0.1, cooldown=5, payload=payload,
+               lifetime=50)
 
 def flap(width = 60, numshots = 6, period = 700, speed = 0.4,
          cooldown = 30, image = None, payload=None):
@@ -75,11 +83,13 @@ def flap(width = 60, numshots = 6, period = 700, speed = 0.4,
             shotgroup.add(s)
     return Weapon(f, cooldown)
 
-def arc(speed, numshots, spread, cooldown = 30, image = None):
+def arc(speed, numshots, spread, cooldown = 30, image = None,
+        payload = nopayload(),lifetime=300):
     def f(position, direction, momentum, shotgroup):
         for i in floatrange(direction - spread, direction + spread, numshots):
             sheading = vectorfromangle(i, speed) + momentum
-            s = Shot(position, sheading, image)
+            s = Shot(position=position, heading=sheading, image=image,
+                     route=advance(), payload=payload, lifetime=lifetime)
             shotgroup.add(s)
     return Weapon(f, cooldown)
 
@@ -103,6 +113,17 @@ def arc3(speed, numshots, spread, cooldown = 30, image = None):
             s = Shot(position, sheading, image, size, route)
             s.kick(momentum)
             shotgroup.add(s)
+    return Weapon(f, cooldown)
+    
+def jitter(speed, spread, cooldown = 30, image = None, payload = None, lifetime = 0):
+    assert(payload is not None)
+    random.seed()
+    def f(position, direction, momentum, shotgroup):
+        d = direction - random.uniform(-1 * spread,spread)
+        sheading = vectorfromangle(d, speed) + momentum
+        s = Shot(position=position, heading=sheading, image=image,
+                 route=advance(), payload=payload, lifetime=lifetime)
+        shotgroup.add(s)
     return Weapon(f, cooldown)
 
 def claw(numshots, spread, dist = 300.0, ctime = 1000,

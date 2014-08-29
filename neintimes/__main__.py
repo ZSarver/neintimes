@@ -33,7 +33,7 @@ class MainGame(state.State):
         #player stuff
         self.p = anchor.Anchor(Vector2D(0,0),pimage)
         for i in range(9):
-            b = Boid(Vector2D(0,0),image)
+            b = Boid(Vector2D(0,0),image, weap=weapon.machinegun())
             self.fgroup.addSquad(b)
         self.fgroup.addAnchor(self.p)
         t = testEffect()
