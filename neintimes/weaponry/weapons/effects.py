@@ -15,3 +15,14 @@ def testEffect():
     lifetime = 1000
     t = StatusEffectTemplate(lifetime, onApply, onUpdate, onEnd)
     return t
+
+def knockbackEffect(vector):
+    def onUpdate(e, *args):
+        return args
+    def onEnd(e):
+        pass
+    def onApply(e)
+        e.target.propel(vector)
+    lifetime = 0
+    t = StatusEffectTemplate(lifetime, onApply, onUpdate, onEnd)
+    return t
