@@ -70,11 +70,11 @@ class MainGame(state.State):
         for ship in playerShipsHit.iterkeys():
             for shot in playerShipsHit[ship]:
                 shot.impact(ship)
-            print "Player ship " + str(key) + " hit!"
+            print "Player ship " + str(ship) + " hit!"
         for ship in enemyShipsHit.iterkeys():
             for shot in enemyShipsHit[ship]:
                 shot.impact(ship)
-            print "Enemy ship " + str(key) + " hit!"
+            print "Enemy ship " + str(ship) + " hit!"
             
     def switchin(self, *args):
         """args should be a tuple of exactly 1 element, a Formation object"""
