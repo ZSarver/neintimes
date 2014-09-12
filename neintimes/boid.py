@@ -99,6 +99,9 @@ class Boid(LocalSprite):
     def shoot(self):
         g = self.groups()[0].shotgroup
         self.weapon.fire(self.position, self.aim, self.momentum, g)
+        
+    def killshot(self):
+        self.kill()
 
     def __getattr__(self, name):
         """Returns a Vector2D of the ship's position."""

@@ -20,3 +20,7 @@ def knockbackPayload(source,knockstrength=0,knockrotation=0):
         e = knockbackEffect(knockvector)
         statuseffects.applyEffect(target, source, e)
     return p
+
+def killPayload(self, target=None):
+    assert(target is not None)
+    target.killshot()

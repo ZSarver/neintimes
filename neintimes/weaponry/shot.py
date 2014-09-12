@@ -18,7 +18,8 @@ class Shot(LocalSprite):
         heading - a Vector2D of the boid's initial heading
         size - the size of the shot 
         route - a route object representing the shot's behavior
-        lifetime - how long it takes the shot to expire"""
+        lifetime - how long it takes the shot to expire
+        payload - a function that takes a shot and a target"""
         assert(position is not None)
         assert(heading is not None)
         assert(payload is not None)
@@ -63,7 +64,6 @@ class Shot(LocalSprite):
 
     def impact(self, target):
         self.payload(self,target)
-        self.kill()
 
 def floatrange(x1, x2, num):
     a = []

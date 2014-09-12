@@ -5,7 +5,7 @@ from weaponry.weapons.routes import *
 
 
 def testweapon():
-    return claw(2,pi/3,ctime=100,cooldown=40,payload=nopayload())
+    return claw(2,pi/3,ctime=100,cooldown=40,payload=killPayload)
     
 def enemyweapon():
     return flap(cooldown=200,payload=nopayload())
