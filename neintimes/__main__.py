@@ -37,8 +37,6 @@ class MainGame(state.State):
             b = Boid(Vector2D(0,0),image, weap=weapons.weapons.machinegun())
             self.fgroup.addSquad(b)
         self.fgroup.addAnchor(self.p)
-        t = testEffect()
-        applyEffect(b, None, t)
         self.screen.add(self.fgroup)
         #create an enemy
         self.enemy = spawnEnemy(Vector2D(100,100), 0, defaultBehavior, enemyformation(), image, pimage, self.p)
@@ -71,11 +69,9 @@ class MainGame(state.State):
         for ship in playerShipsHit.iterkeys():
             for shot in playerShipsHit[ship]:
                 shot.impact(ship)
-            print "Player ship " + str(ship) + " hit!"
         for ship in enemyShipsHit.iterkeys():
             for shot in enemyShipsHit[ship]:
                 shot.impact(ship)
-            print "Enemy ship " + str(ship) + " hit!"
             
     def switchin(self, *args):
         """args should be a tuple of exactly 1 element, a Formation object"""

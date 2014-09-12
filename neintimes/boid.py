@@ -10,6 +10,8 @@ from weaponry.weapons import *
 import pprint
 import random
 
+import pdb
+
 FORMATION_LOCK_DISTANCE = 10
 
 class Boid(LocalSprite):
@@ -21,6 +23,7 @@ class Boid(LocalSprite):
         image - a Surface representing the Boid
         rect - the rect representing the hitbox and position of the boid"""
         Sprite.__init__(self)
+        assert(weap is not None)
         self.image = image
         self.originalimage = image
         self.radius = max(image.get_width()/3, image.get_height()/3)
@@ -36,10 +39,7 @@ class Boid(LocalSprite):
         self.maxSpeed = maxSpeed
         self.rotationspeed = rotationspeed
         self.statusEffects=[]
-        if weap == None:
-            self.weapon = weapons.testweapon()
-        else:
-            self.weapon = weap
+        self.weapon = weap
     def addEffect(self,effect):
         self.statusEffects.add(effect)
     def removeEffect(self, index):
@@ -97,11 +97,14 @@ class Boid(LocalSprite):
         self.momentum = (self.momentum + vector).crop_ip(self.maxSpeed)
 
     def shoot(self):
-        g = self.groups()[0].shotgroup
-        self.weapon.fire(self.position, self.aim, self.momentum, g)
+        if self.alive():
+            g = self.groups()[0].shotgroup
+            self.weapon.fire(self.position, self.aim, self.momentum, g)
         
     def killshot(self):
-        self.kill()
+        #pdb.set_trace()
+        g = self.groups()[0]
+        g.empty()
 
     def __getattr__(self, name):
         """Returns a Vector2D of the ship's position."""

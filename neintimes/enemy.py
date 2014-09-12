@@ -19,7 +19,7 @@ def spawnEnemy(position, angle, behavior, formation, image, aimage, target):
         p = position + slot.spatialOffset.rotate(angle) 
         a = angle + slot.angularOffset
         w = slot.weapon
-        b = Boid(position=p, aim=a, image=image)
+        b = Boid(position=p, aim=a, image=image, weap=w)
         enemygroup.addSquad(b)
     enemygroup.addAnchor(anchor)
     return enemygroup

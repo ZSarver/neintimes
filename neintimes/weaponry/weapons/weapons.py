@@ -11,7 +11,7 @@ def enemyweapon():
     return flap(cooldown=200,payload=nopayload())
     
 def machinegun(payload=nopayload()):
-    return jitter(speed=10.0, spread=0.1, cooldown=5, payload=payload,
+    return jitter(speed=10.0, spread=0.1, cooldown=5, payload=killPayload,
                lifetime=50)
                
 def jitter(speed, spread, cooldown = 30, image = None, payload = None, lifetime = 0):
