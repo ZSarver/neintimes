@@ -104,7 +104,8 @@ class Boid(LocalSprite):
     def killshot(self):
         #pdb.set_trace()
         g = self.groups()[0]
-        g.empty()
+        g.unregister()
+        
 
     def __getattr__(self, name):
         """Returns a Vector2D of the ship's position."""
