@@ -1,6 +1,6 @@
 #vector.py - implements vectors
 
-from math import *
+from math import pi, sin, cos, sqrt, atan2
 
 class Vector2D:
     def __init__(self, x, y):

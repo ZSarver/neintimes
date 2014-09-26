@@ -1,28 +1,22 @@
  #boid.py - implements the individual agents of a flock
 
 import pygame
-from vector import *
-from pygame.sprite import *
-from localsprite import *
-from math import *
-from weaponry import *
-from weaponry.weapons import *
-import pprint
-import random
-
-import pdb
+from localsprite import LocalSprite
+from vector import Vector2D, distance
+from math import sqrt, degrees
 
 FORMATION_LOCK_DISTANCE = 10
 
 class Boid(LocalSprite):
-    def __init__(self, position, image, aim=0, weight=1, thrust=3, maxSpeed=6, rotationspeed=0.02, weap=None):
+    def __init__(self, position, image, aim=0, weight=1, thrust=3,
+    maxSpeed=6, rotationspeed=0.02, weap=None):
         """Creates a new Boid
 
         aim - a Vector2D of the boid's initial aim in radians
         weight - the boid's weight
         image - a Surface representing the Boid
         rect - the rect representing the hitbox and position of the boid"""
-        Sprite.__init__(self)
+        LocalSprite.__init__(self)
         assert(weap is not None)
         self.image = image
         self.originalimage = image
