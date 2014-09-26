@@ -1,3 +1,5 @@
+#statuseffects.py
+
 class StatusEffectTemplate:
     def __init__(self, lifetime, onApply, onUpdate, onEnd):
         self.lifetime = lifetime # effect duration

@@ -1,16 +1,18 @@
-from weaponry.weapon import *
-from vector import pi
-from weaponry.weapons.payloads import *
-from weaponry.weapons.routes import *
-
+import random
+from weaponry.weapon import Weapon
+from vector import pi, vectorfromangle
+from weaponry.weapons.payloads import noPayload, killPayload
+from weaponry.weapons.routes import advance, loop, torpedo, \
+CLOCKWISE, COUNTERCLOCKWISE
+from weaponry.shot import floatrange, Shot
 
 def testweapon():
     return claw(2,pi/3,ctime=100,cooldown=40,payload=killPayload)
     
 def enemyweapon():
-    return flap(cooldown=200,payload=nopayload())
+    return flap(cooldown=200,payload=noPayload())
     
-def machinegun(payload=nopayload()):
+def machinegun(payload=noPayload()):
     return jitter(speed=10.0, spread=0.1, cooldown=5, payload=killPayload,
                lifetime=50)
                
@@ -35,9 +37,9 @@ def flap(width = 60, numshots = 6, period = 700, speed = 0.4,
             sheading = vectorfromangle(direction, speed) + momentum
             size = 1
             if i > 0:
-                c = counterclockwise
+                c = COUNTERCLOCKWISE
             else:
-                c = clockwise
+                c = CLOCKWISE
             route = loop(abs(i), period, direction, c) + advance()
             s = Shot(position=p, 
                      heading=sheading,
@@ -49,7 +51,7 @@ def flap(width = 60, numshots = 6, period = 700, speed = 0.4,
     return Weapon(f, cooldown)
     
 def arc(speed, numshots, spread, cooldown = 30, image = None,
-        payload = nopayload(),lifetime=300):
+        payload = noPayload(),lifetime=300):
     def f(position, direction, momentum, shotgroup):
         for i in floatrange(direction - spread, direction + spread, numshots):
             sheading = vectorfromangle(i, speed) + momentum
@@ -92,9 +94,9 @@ def claw(numshots, spread, dist = 300.0, ctime = 1000,
                 period = ctime * (2 * pi) / (pi - 2 * theta)
                 if abs(i) > pi / 2:
                     period = ctime * (2 * pi) / (pi + 2 * theta)
-                cc = counterclockwise
+                cc = COUNTERCLOCKWISE
                 if i < 0:
-                    cc = clockwise
+                    cc = CLOCKWISE
                 sheading = momentum
                 route = loop(radius, period, d, cc) + advance()
             else:
