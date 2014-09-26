@@ -5,10 +5,10 @@ import pygame
 import pygame.font as ft
 
 #neintimes imports
-from vector import *
-import camera
-from stars import *
-from gui import *
+from vector import Vector2D
+from camera import constant
+from stars import Starlayers
+from gui import UpdatingTextBox
 
 screenwidth = 640
 screenheight = 480
@@ -34,7 +34,7 @@ class Screen:
         density = (0,8)
         self.stars = Starlayers((x,y), depths, colors, density)
         if cam == None:
-            self.cam = camera.constant(Vector2D(0,0))
+            self.cam = constant(Vector2D(0,0))
         else:
             self.cam = cam
         self.widgets = []

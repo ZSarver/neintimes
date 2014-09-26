@@ -2,8 +2,8 @@
 #relative placement of drawing rects
 
 import pygame
-from pygame.sprite import *
-from vector import *
+from pygame.sprite import Sprite, Group
+from vector import Vector2D
 
 class LocalSprite(Sprite):
     def __init__(self, position=Vector2D(0,0)):

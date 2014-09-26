@@ -1,6 +1,5 @@
 import random
 import pygame
-from vector import *
 
 blocksize = 300
 

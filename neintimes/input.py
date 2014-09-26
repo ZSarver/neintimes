@@ -1,9 +1,10 @@
 import pygame
-from pygame.locals import *
-import vector
+from pygame.locals import K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x, K_TAB
+from vector import Vector2D
 
 
-[playerThrust, playerReverse, playerStrafe, playerLeft, playerRight, playerBoost, playerShoot, changeState] = range(8)
+[playerThrust, playerReverse, playerStrafe, playerLeft, playerRight, 
+playerBoost, playerShoot, changeState] = range(8)
 
 keyBinding = {}
 keyBinding[playerThrust] = K_UP
@@ -43,10 +44,10 @@ def getInputActions():
         cs = False
     if vthrust is 0 and hthrust is 0:
         thrust = False
-        thrustDirection = vector.Vector2D(0,0)
+        thrustDirection = Vector2D(0,0)
     else:
         thrust = True
-        thrustDirection = vector.Vector2D(vthrust, hthrust).unit
+        thrustDirection = Vector2D(vthrust, hthrust).unit
     if keylist[keyBinding[playerBoost]]:
         boost = True
     else:
