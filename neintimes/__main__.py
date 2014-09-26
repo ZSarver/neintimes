@@ -11,14 +11,15 @@ from screen import Screen
 from camera import roughTrack
 from flock import Flock
 from data import loadsurface
-from player import Player
 from boid import Boid
 from vector import Vector2D
 from statuseffects import testEffect, applyEffect
 from formationEditor import FormationEditor
 from input import getInputActions
 from formation import Formation
-from enemy import *
+from anchor import Anchor
+from weaponry.weapons.weapons import machinegun
+from enemy import spawnEnemy, defaultBehavior, enemyformation
 
 class MainGame(State):
     def __init__(self, screen):
@@ -36,9 +37,9 @@ class MainGame(State):
         self.screen.add(self.enemyList)
         #player stuff
         self.register(self.allyList, self.playerFlock)
-        p = anchor.Anchor(Vector2D(0,0),pimage)
+        p = Anchor(Vector2D(0,0),pimage)
         for i in range(9):
-            b = Boid(Vector2D(0,0),image, weap=weapons.weapons.machinegun())
+            b = Boid(Vector2D(0,0),image, weap=machinegun())
             self.playerFlock.addSquad(b)
         self.playerFlock.addAnchor(p)
         #create an enemy
@@ -74,10 +75,10 @@ class MainGame(State):
         playerShipsHit = {}
         for ally in self.allyList:
             for enemy in self.enemyList:
-                playerShipsHit = groupcollide(ally, enemy.shotgroup,
-                                      False, False, collide_circle)
-                enemyShipsHit = groupcollide(enemy, ally.shotgroup,
-                                     False, False, collide_circle)
+                playerShipsHit = pygame.sprite.groupcollide(ally, enemy.shotgroup,
+                                      False, False, pygame.sprite.collide_circle)
+                enemyShipsHit = pygame.sprite.groupcollide(enemy, ally.shotgroup,
+                                     False, False, pygame.sprite.collide_circle)
                 for ship in playerShipsHit.iterkeys():
                     for shot in playerShipsHit[ship]:
                         shot.impact(ship)

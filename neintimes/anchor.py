@@ -1,13 +1,18 @@
-#anchor.py
+#python imports
 
+#pygame imports
 import pygame
+
+#neintimes imports
+from localsprite import LocalSprite
+from pygame.sprite import Sprite
 from vector import *
 from pygame.sprite import *
 from localsprite import *
 from math import *
 from weaponry import *
 import pprint
-import random
+
 
 rotationSpeed = 0.05
 thrust = 0.5
