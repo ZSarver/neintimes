@@ -1,4 +1,5 @@
 #python imports
+import math
 
 #pygame imports
 import pygame
@@ -6,13 +7,7 @@ import pygame
 #neintimes imports
 from localsprite import LocalSprite
 from pygame.sprite import Sprite
-from vector import *
-from pygame.sprite import *
-from localsprite import *
-from math import *
-from weaponry import *
-import pprint
-
+from vector import Vector2D
 
 rotationSpeed = 0.05
 thrust = 0.5
@@ -44,7 +39,7 @@ class Anchor(LocalSprite):
     def playerInput(self, relThrustVector, boost, rotationDir, shooting):
         self.shooting = shooting
         self.aim += rotationSpeed * rotationDir 
-        self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,degrees(float(self.aim))),False,True)
+        self.image = pygame.transform.flip(pygame.transform.rotate(self.originalimage,math.degrees(float(self.aim))),False,True)
         self.rect = self.image.get_rect()
         thrustVector = relThrustVector.rotate(self.aim).mult(thrust)
         self.propel(thrustVector, baseSpeed)
