@@ -16,10 +16,10 @@ from vector import Vector2D
 from statuseffects import testEffect, applyEffect
 from formationEditor import FormationEditor
 from input import getInputActions
-from formation import Formation
+from formation import Formation, enemyformation
 from anchor import Anchor
 from weaponry.weapons.weapons import machinegun
-from enemy import spawnEnemy, defaultBehavior, enemyformation
+from enemy import spawnEnemy, defaultBehavior
 
 class MainGame(State):
     def __init__(self, screen):

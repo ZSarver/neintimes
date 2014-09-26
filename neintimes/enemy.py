@@ -1,16 +1,6 @@
-from boid import *
-from formation import *
+from boid import Boid
 from anchor import Anchor
 from flock import Flock
-from weaponry import *
-
-#~ class enemy():
-    #~ def __init__(self, position, behavior=None):
-        #~ self.position = Vector2D(0,0)
-        #~ self.momentum = Vector2D(0,0)
-        #~ self.squad = None
-        #~ if behavior is None:
-            #~ self.behavior = defaultBehavior
                
 def spawnEnemy(position, angle, behavior, formation, image, aimage, target):
     enemygroup = Flock(1.2, formation)
