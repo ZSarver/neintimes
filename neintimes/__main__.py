@@ -1,31 +1,29 @@
+#python imports
+import random
 
 #pygame imports
 import pygame
-from pygame.sprite import *
+import pygame.locals as pl
 
 #neintimes imports
-from pygame.locals import *
-from boid import *
-from screen import *
-from flock import *
-from data import *
-from math import *
-from weaponry import *
-from weaponry.weapons import *
-from input import *
-from statuseffects import *
-import anchor
-import camera
-import random
+from state import State, statemanager
+from screen import Screen
+from camera import roughTrack
+from flock import Flock
+from data import loadsurface
+from player import Player
+from boid import Boid
+from vector import Vector2D
+from statuseffects import testEffect, applyEffect
 from formationEditor import FormationEditor
-import state
+from input import getInputActions
 from formation import Formation
 from enemy import *
 
-class MainGame(state.State):
+class MainGame(State):
     def __init__(self, screen):
         """ your app starts here"""
-        state.State.__init__(self, screen)
+        State.__init__(self, screen)
         #create game objects
         self.playerFlock = Flock(1.2)
         #sprite groups must be added to the screen to be drawn
@@ -57,12 +55,12 @@ class MainGame(state.State):
     def run(self):
         #deal with eventlist
         for i in pygame.event.get():
-            if i.type == QUIT:
+            if i.type == pl.QUIT:
                 exit()
         self.checkCollisions()
         (thrustDirection, boost, rotation, shooting, changeState)  = getInputActions()
         if changeState:
-            state.statemanager.switch("fe", self.playerFlock.formation)
+            statemanager.switch("fe", self.playerFlock.formation)
         self.playerFlock.anchor.playerInput(thrustDirection, boost, rotation, shooting)
         for ally in self.allyList:
             ally.update()
@@ -89,7 +87,7 @@ class MainGame(state.State):
             
     def switchin(self, *args):
         """args should be a tuple of exactly 1 element, a Formation object"""
-        state.State.switchin(self)
+        State.switchin(self)
         if len(args) > 1:
             raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
         if len(args) == 1:
@@ -101,7 +99,7 @@ class MainGame(state.State):
             self.screen.add(self.playerFlock)
             #no widgets to register
             #switch camera
-            self.screen.cam = camera.roughTrack(self.playerFlock.anchor.position)
+            self.screen.cam = roughTrack(self.playerFlock.anchor.position)
 
     def switchout(self):
         #unregister sprites
@@ -113,13 +111,13 @@ if __name__ == "__main__":
     print "Initializing pygame..."
     pygame.init()
     print "Creating screen"
-    screen = Screen(800,600,camera.roughTrack(0))
+    screen = Screen(640,480,roughTrack(0))
     game = MainGame(screen)
     editor = FormationEditor(screen)
 
-    state.statemanager.addstate(game, "game")
-    state.statemanager.addstate(editor, "fe")
-    state.statemanager.switch("game")
+    statemanager.addstate(game, "game")
+    statemanager.addstate(editor, "fe")
+    statemanager.switch("game")
 
     while True:
-        state.statemanager.state.run()
+        statemanager.state.run()
