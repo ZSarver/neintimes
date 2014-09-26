@@ -7,10 +7,12 @@ Enhancing this to handle caching etc. is left as an exercise for the reader.
 Note that pyglet users should probably just add the data directory to the
 pyglet.resource search path.
 '''
-
+#python imports
 import os
+
+#pygame imports
 import pygame
-from pygame.locals import *
+from pygame.locals import RLEACCEL
 
 data_py = os.path.abspath(os.path.dirname(__file__))
 data_dir = os.path.normpath(os.path.join(data_py, '..', 'data'))
