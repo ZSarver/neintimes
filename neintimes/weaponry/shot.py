@@ -1,13 +1,10 @@
 #shot.py - implements shots
 
 import pygame
-from vector import *
-from route import *
-from pygame.sprite import *
-from localsprite import *
-from math import *
 import pprint
-
+from vector import Vector2D
+from weapons.routes import advance
+from localsprite import LocalSprite
 
 class Shot(LocalSprite):
     def __init__(self, position=None, heading=None, image=None, size=1, 
@@ -24,7 +21,7 @@ class Shot(LocalSprite):
         assert(heading is not None)
         assert(payload is not None)
         assert(route is not None)
-        Sprite.__init__(self)
+        LocalSprite.__init__(self, position)
         self.heading = heading # V2D
         self.position = position # V2D
         self.size = size

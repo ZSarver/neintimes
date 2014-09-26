@@ -1,6 +1,9 @@
-from weaponry import *
+#payloads.py
 
-def nopayload():
+from weaponry.statuseffects import applyEffect
+from vector import vectorfromangle
+
+def noPayload():
     def p(self,target=None):
         assert(target is not None)
         pass
@@ -9,7 +12,7 @@ def nopayload():
 def effectPayload(effecttemplate):
     def p(self,target=None):
         assert(target is not None)
-        statuseffects.applyEffect(target, source, effecttemplate)
+        applyEffect(target, source, effecttemplate)
     return p
     
 def knockbackPayload(source,knockstrength=0,knockrotation=0):
@@ -18,7 +21,7 @@ def knockbackPayload(source,knockstrength=0,knockrotation=0):
         knockdir = self.heading.direction + knockrotation
         knockvector = vectorfromangle(knockdir, r=knockstrength)
         e = knockbackEffect(knockvector)
-        statuseffects.applyEffect(target, source, e)
+        applyEffect(target, source, e)
     return p
 
 def killPayload(self, target=None):

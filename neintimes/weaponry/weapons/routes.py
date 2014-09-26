@@ -1,7 +1,6 @@
-from weaponry import *
-from vector import pi
-from weaponry.route import *
-
+from vector import pi, Vector2D
+from weaponry.route import Route
+from math import cos, sin
 
 def advance():
     def f(shot):
@@ -18,10 +17,10 @@ def accelerate(amount = .1):
         shot.kick(shot.heading.unit.mult(amount))
     return Route(f)
 
-clockwise = 1
-counterclockwise = -1
-def loop(radius = 30, period = 100, angle=0, direction=clockwise):
-    if direction == clockwise:
+CLOCKWISE = 1
+COUNTERCLOCKWISE = -1
+def loop(radius = 30, period = 100, angle=0, direction=CLOCKWISE):
+    if direction == CLOCKWISE:
         start = angle - pi / 2
     else:
         start = angle + pi / 2

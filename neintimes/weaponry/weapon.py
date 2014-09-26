@@ -1,14 +1,4 @@
 #weapon.py
-
-#python imports
-import random
-
-#neintimes imports
-from shot import *
-from route import *
-from vector import *
-from statuseffects import *
-
             
 class Weapon:
     def __init__(self, f = None, cooldown = None):
