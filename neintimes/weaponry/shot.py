@@ -10,22 +10,29 @@ import pprint
 
 
 class Shot(LocalSprite):
-    def __init__(self, position, heading, image=None, size=1, route=None, lifetime=300):
+    def __init__(self, position=None, heading=None, image=None, size=1, 
+                 route=None, lifetime=300, payload=None):
         """Creates a new shot.
 
         position - a Vector2D of the shot's position
         heading - a Vector2D of the boid's initial heading
         size - the size of the shot 
         route - a route object representing the shot's behavior
-        lifetime - how long it takes the shot to expire"""
+        lifetime - how long it takes the shot to expire
+        payload - a function that takes a shot and a target"""
+        assert(position is not None)
+        assert(heading is not None)
+        assert(payload is not None)
+        assert(route is not None)
         Sprite.__init__(self)
-        self.heading = heading
-        self.position = position
+        self.heading = heading # V2D
+        self.position = position # V2D
         self.size = size
         self.age = 0.0
         self.lifetime=lifetime
+        self.payload=payload
 
-        if image == None:
+        if image == None: #TODO: crash here
             image = pygame.Surface((5* size, 5 * size))
             image.fill((0,255,0))
             image.convert()
@@ -54,6 +61,9 @@ class Shot(LocalSprite):
 
     def kick(self, vector):
         self.heading += vector
+
+    def impact(self, target):
+        self.payload(self,target)
 
 def floatrange(x1, x2, num):
     a = []

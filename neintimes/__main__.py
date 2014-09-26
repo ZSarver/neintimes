@@ -18,60 +18,92 @@ from statuseffects import testEffect, applyEffect
 from formationEditor import FormationEditor
 from input import getInputActions
 from formation import Formation
+from enemy import *
 
 class MainGame(State):
     def __init__(self, screen):
         """ your app starts here"""
         State.__init__(self, screen)
         #create game objects
-        self.fgroup = Flock(1.2,0.0)
+        self.playerFlock = Flock(1.2)
         #sprite groups must be added to the screen to be drawn
         image = loadsurface("small2.png")
         pimage = loadsurface("anchor.png")
-        #~ image = pygame.Surface((15, 15))
-        #~ image.fill((0,255,0))
-        #~ image.convert()
-        self.p = Player(None, pimage)
+        #game object list creation and registration
+        self.allyList = []
+        self.enemyList = []
+        self.screen.add(self.allyList)
+        self.screen.add(self.enemyList)
+        #player stuff
+        self.register(self.allyList, self.playerFlock)
+        p = anchor.Anchor(Vector2D(0,0),pimage)
         for i in range(9):
-            b = Boid(Vector2D(0,0),image)
-            self.fgroup.addSquad(b)
-        self.fgroup.addAnchor(self.p)
-        t = testEffect()
-        applyEffect(b, None, t)
+            b = Boid(Vector2D(0,0),image, weap=weapons.weapons.machinegun())
+            self.playerFlock.addSquad(b)
+        self.playerFlock.addAnchor(p)
+        #create an enemy
+        enemy = spawnEnemy(Vector2D(100,100), 0, defaultBehavior, enemyformation(), image, pimage, p)
+        self.register(self.enemyList, enemy)
+
+
+    def register(self,list,entity):
+        list.append(entity)
+        def f():
+            list.remove(entity)
+        entity.unregister = f
 
     def run(self):
         #deal with eventlist
         for i in pygame.event.get():
             if i.type == pl.QUIT:
                 exit()
+        self.checkCollisions()
         (thrustDirection, boost, rotation, shooting, changeState)  = getInputActions()
         if changeState:
-            statemanager.switch("fe", self.fgroup.formation)
-        self.p.playerInput(thrustDirection, boost, rotation, shooting)
-
-        self.fgroup.update()
-        self.screen.update(self.p.position) #center camera on player
+            statemanager.switch("fe", self.playerFlock.formation)
+        self.playerFlock.anchor.playerInput(thrustDirection, boost, rotation, shooting)
+        for ally in self.allyList:
+            ally.update()
+        for enemy in self.enemyList:
+            enemy.update()
+        self.screen.update(self.playerFlock.anchor.position) #center camera on player
         pygame.event.pump()
-
+        
+    def checkCollisions(self):
+        #player/enemy bullet collisions
+        playerShipsHit = {}
+        for ally in self.allyList:
+            for enemy in self.enemyList:
+                playerShipsHit = groupcollide(ally, enemy.shotgroup,
+                                      False, False, collide_circle)
+                enemyShipsHit = groupcollide(enemy, ally.shotgroup,
+                                     False, False, collide_circle)
+                for ship in playerShipsHit.iterkeys():
+                    for shot in playerShipsHit[ship]:
+                        shot.impact(ship)
+                for ship in enemyShipsHit.iterkeys():
+                    for shot in enemyShipsHit[ship]:
+                        shot.impact(ship)
+            
     def switchin(self, *args):
-	"""args should be a tuple of exactly 1 element, a Formation object"""
+        """args should be a tuple of exactly 1 element, a Formation object"""
         State.switchin(self)
         if len(args) > 1:
-	    raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
-	if len(args) == 1:
-		if not isinstance(args[0],Formation):
-		    raise ValueError("MainGame.switchin() needs a Formation object!")
-	if len(args) == 1:
-	    self.fgroup.changeFormation(args[0])
-        #register sprites
-        self.screen.add(self.fgroup)
-        #no widgets to register
-        #switch camera
-        self.screen.cam = roughTrack(self.p.position)
+            raise ValueError("MainGame.switchin() should take 1 or fewer arguments!")
+        if len(args) == 1:
+            if not isinstance(args[0],Formation):
+                raise ValueError("MainGame.switchin() needs a Formation object!")
+        if len(args) == 1:
+            self.playerFlock.changeFormation(args[0])
+            #register sprites
+            self.screen.add(self.playerFlock)
+            #no widgets to register
+            #switch camera
+            self.screen.cam = roughTrack(self.playerFlock.anchor.position)
 
     def switchout(self):
         #unregister sprites
-        self.screen.remove(self.fgroup)
+        self.screen.remove(self.playerFlock)
         #no widgets to unregister
 
 if __name__ == "__main__":

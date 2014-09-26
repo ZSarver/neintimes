@@ -26,7 +26,7 @@ class Screen:
 #        self.background.blit(bgblock,(0,0))
         self.displaysurface.blit(self.background,(0,0))
         pygame.display.flip()
-        self.groups = []
+        self.referenceLists = []
         self.offset = Vector2D(0,0)
         depths = [15.0 / (15 - d) for d in range(10)]
         shades = [255 - (20 * d) for d in range(10)]
@@ -57,32 +57,35 @@ class Screen:
         pygame.display.flip()
 
     def clear(self):
-        for g in self.groups:
-            g.clear(self.displaysurface, self.background)
+        for rl in self.referenceLists:
+            for ref in rl:
+                ref.clear(self.displaysurface, self.background)
         self.stars.undraw(self.displaysurface)
         for w in self.widgets:
             self.displaysurface.blit(self.background, w.size())
 
     def place(self):
         #positions the sprite rects for group
-        for g in self.groups:
-            g.place(self.offset)
+        for rl in self.referenceLists:
+            for ref in rl:
+                ref.place(self.offset)
         self.stars.update((self.offset.x, self.offset.y))
 
     def draw(self):
         self.stars.draw(self.displaysurface,(self.offset.x, self.offset.y))
-        for g in self.groups:
-            g.draw(self.displaysurface)
+        for rl in self.referenceLists:
+            for ref in rl:
+                ref.draw(self.displaysurface)
         for w in self.widgets:
             self.displaysurface.blit(pygame.Surface.convert(w.draw(self.deltaT)),w.position)
 
-    def add(self, group):
+    def add(self, reflist):
         #this group will be drawn to the screen
-        self.groups.append(group)
+        self.referenceLists.append(reflist)
 
-    def remove(self, group):
+    def remove(self, reflist):
         #this group will no longer be draw to the screen
-        self.groups.remove(group)
+        self.referenceLists.remove(reflist)
 
     def center(self, place = Vector2D(0,0)):
         #centers the screen at this position

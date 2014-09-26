@@ -12,14 +12,14 @@ import pprint
 MAX_HISTORY_FRAMES = 300
 
 class Flock(LocalGroup):
-    def __init__(self, accelConst=1.2, seperation=30.0, formation=None):
+    def __init__(self, accelConst=1.2, formation=None):
         Group.__init__(self)
         self.centerOfMass = None
         self.momentum = None
         self.targetLocation = None
         self.accelConst = accelConst
-        self.seperation = seperation#deprecate
         self.shotgroup = LocalGroup()
+        self.anchorgroup = LocalGroup()
         self.squad = []
         self.anchor = None
         if formation == None:
@@ -34,16 +34,18 @@ class Flock(LocalGroup):
         boid.formationSlot = self.formation.getSlot(l)
         self.squad.append(boid)
     def addAnchor(self, anchor):
-        self.add(anchor)
         self.anchor = anchor
-        anchor.setSquad(self.squad)
-        anchor.history = []
+        self.anchorgroup.add(self.anchor)
+        self.anchor.setSquad(self.squad)
+        self.anchor.history = []
     def draw(self, screen):
+        self.anchorgroup.draw(screen)
         self.shotgroup.draw(screen)
-        Group.draw(self, screen)
+        LocalGroup.draw(self, screen)
 
     def place(self, offset=Vector2D(0,0)):
         self.shotgroup.place(offset)
+        self.anchorgroup.place(offset)
         LocalGroup.place(self, offset)
 
     def clear(self, screen, background):
@@ -51,7 +53,7 @@ class Flock(LocalGroup):
         Group.clear(self, screen, background)
 
     def update(self):
-	"""Updates, calculating everything each individual boid needs
+        """Updates, calculating everything each individual boid needs
         to know to flock effectively."""
         self.shotgroup.update()
         p = self.anchor.position
@@ -79,6 +81,6 @@ class Flock(LocalGroup):
         self.anchor.update()
 
     def changeFormation(self, formation):
-	self.formation = formation
-	for i in range(len(self.squad)):
-	    self.squad[i].formationSlot = self.formation.getSlot(i)
+        self.formation = formation
+        for i in range(len(self.squad)):
+            self.squad[i].formationSlot = self.formation.getSlot(i)
