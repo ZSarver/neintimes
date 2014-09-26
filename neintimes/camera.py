@@ -1,6 +1,8 @@
-#camera.py
+#pygame imports
 import pygame
-from vector import *
+
+#neintimes imports
+from vector import Vector2D
 
 class Camera:
     """A wrapper for manipulating and composing camera related
